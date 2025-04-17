@@ -27,6 +27,10 @@ namespace TournoiServer.DB
             // make storagee for intermediate data
 
             // populate data???
+            Player[] players = { new Player { City = "MSC", FullName = "first" }, new Player { City = "SPB", FullName = "second" } };
+            AddRows("players", players);
+
+            GetTable<Player>("players");
         }
 
         public static DBConnection Instance

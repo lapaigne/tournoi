@@ -8,7 +8,7 @@ namespace TournoiServer.DB
     {
         private SqliteCommand _command;
 
-        private bool ExecuteCommand(string command, string displayText = "Unspecified Operation")
+        private bool ExecuteCommand(string command, string commandName = "Unspecified Operation")
         {
             _command = Connection.CreateCommand();
             _command.CommandText = command;
@@ -19,17 +19,35 @@ namespace TournoiServer.DB
             }
             catch (SqliteException e)
             {
-                _command.CommandText = default;
-                Console.WriteLine($"ERROR WHEN: {displayText}");
+                Console.WriteLine($"ERROR WHEN: {commandName}");
                 Console.WriteLine(e.Message);
                 return false;
             }
 
-            _command.CommandText = default;
-            Console.WriteLine($"OK: {displayText}");
+            Console.WriteLine($"OK: {commandName}");
             return true;
         }
 
+        private bool ExecuteQuery(string command, out SqliteDataReader reader, string commandName = "Unspecified Operation")
+        {
+            _command = Connection.CreateCommand();
+            _command.CommandText = command;
+
+            try
+            {
+                reader = _command.ExecuteReader();
+            }
+            catch (SqliteException e)
+            {
+                reader = default;
+                Console.WriteLine($"ERROR WHEN: {commandName}");
+                Console.WriteLine(e.Message);
+                return false;
+            }
+
+            Console.WriteLine($"OK: {commandName}");
+            return true;
+        }
         private bool CreateTable<T>(string tableName)
         {
             PropertyInfo[] properties = typeof(T).GetProperties();
@@ -130,8 +148,30 @@ namespace TournoiServer.DB
             return default;
         }
 
+        private IEnumerable<T>? GetTable<T>(string table, params string[] propertyNames)
+        {
+            return default;
+        }
+
         private IEnumerable<T>? GetTable<T>(string table)
         {
+            IEnumerable<PropertyInfo> properties = typeof(T).GetProperties()
+                .Where(p => !Attribute.IsDefined(p, typeof(DBPrimaryKey)));
+
+            string propString = string.Join(", ", properties.Select(p => p.Name));
+
+            string command = $"SELECT {propString} FROM {table}";
+
+            if (ExecuteQuery(command, out var reader, $"Read data of type {typeof(T).Name} from {table}"))
+            {
+                if (!reader.HasRows) { return default; }
+                while (reader.Read())
+                {
+                    string current = string.Join("\t", properties.Select(p => reader[p.Name]));
+                    Console.WriteLine(current);
+                }
+            }
+
             return default;
         }
     }
