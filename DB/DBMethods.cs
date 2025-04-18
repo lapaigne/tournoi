@@ -28,7 +28,9 @@ namespace TournoiServer.DB
             return true;
         }
 
-        private bool ExecuteQuery(string command, out SqliteDataReader reader, string commandName = "Unspecified Operation")
+        private bool ExecuteQuery(string command,
+            out SqliteDataReader reader,
+            string commandName = "Unspecified Operation")
         {
             _command = Connection.CreateCommand();
             _command.CommandText = command;
@@ -48,6 +50,7 @@ namespace TournoiServer.DB
             Console.WriteLine($"OK: {commandName}");
             return true;
         }
+
         private bool CreateTable<T>(string tableName)
         {
             PropertyInfo[] properties = typeof(T).GetProperties();
@@ -150,6 +153,20 @@ namespace TournoiServer.DB
 
         private IEnumerable<T>? GetTable<T>(string table, params string[] propertyNames)
         {
+            string propString = string.Join(", ", propertyNames);
+
+            string command = $"SELECT {propString} FROM {table}";
+
+            if (ExecuteQuery(command, out var reader, $"Read data of type {typeof(T).Name} from {table}"))
+            {
+                if (!reader.HasRows) { return default; }
+                while (reader.Read())
+                {
+                    string current = string.Join("\t", propertyNames.Select(p => reader[p]));
+                    Console.WriteLine(current);
+                }
+            }
+
             return default;
         }
 
