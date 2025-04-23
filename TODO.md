@@ -1,3 +1,4 @@
+Add foreign key parser in DBMethods
 Add predefined schemes: 8 through 16
 *Add EQ balancer -- in process
 Add color distribution

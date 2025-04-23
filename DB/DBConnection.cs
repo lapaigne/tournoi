@@ -15,11 +15,6 @@ namespace TournoiServer.DB
 
             CreateTable<PlayerModel>("players");
 
-            CreateTable<SIPlayerModel>("si_players");
-            CreateTable<AntiSIPlayerModel>("anti_si_players");
-            CreateTable<PairSIPlayerModel>("pair_si_players");
-            CreateTable<EQPlayerModel>("eq_players");
-
             // create tables for result
 
             // create tables for play scheme

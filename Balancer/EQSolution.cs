@@ -1,9 +1,9 @@
 ﻿namespace TournoiServer.Balancer
 {
-    public struct EQSolution
+    public class EQSolution
     {
-        public EQTeam[] Teams { get; set; }
-        public readonly int Count => Teams.Length;
-        public bool Complete { get; private set; }
+        public required ulong[] Teams { get; set; }
+        public bool Complete { get; set; }
+        public int Count => Teams.Length;
     }
 }

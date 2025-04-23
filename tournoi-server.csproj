@@ -27,6 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\ASI\" />
+    <Folder Include="Models\SI\" />
     <Folder Include="Schemes\" />
   </ItemGroup>
 

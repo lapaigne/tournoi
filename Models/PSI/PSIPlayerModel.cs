@@ -1,6 +1,6 @@
-﻿namespace TournoiServer.Models.Team
+﻿namespace TournoiServer.Models
 {
-    public struct PSITeamModel
+    public struct PSIPlayerModel
     {
         [DBPrimaryKey]
         public int Id { get; set; }
