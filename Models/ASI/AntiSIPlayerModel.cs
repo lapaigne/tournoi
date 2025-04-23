@@ -1,14 +1,11 @@
 ﻿namespace TournoiServer.Models
 {
-    public struct Player
+    public struct AntiSIPlayerModel
     {
-        public Player() { }
-
         [DBPrimaryKey]
         public int Id { get; set; }
-        public string FullName { get; set; } = string.Empty;
         public double Rank { get; set; }
-        public string City { get; set; } = string.Empty;
+        public string City { get; set; }
         public Sex Sex { get; set; }
     }
 }

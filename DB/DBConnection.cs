@@ -13,12 +13,12 @@ namespace TournoiServer.DB
             _connection = new SqliteConnection("Data Source=database.db");
             _connection.Open();
 
-            CreateTable<Player>("players");
+            CreateTable<PlayerModel>("players");
 
-            CreateTable<SIPlayer>("si_players");
-            CreateTable<AntiSIPlayer>("anti_si_players");
-            CreateTable<PairSIPlayer>("pair_si_players");
-            CreateTable<EQPlayer>("eq_players");
+            CreateTable<SIPlayerModel>("si_players");
+            CreateTable<AntiSIPlayerModel>("anti_si_players");
+            CreateTable<PairSIPlayerModel>("pair_si_players");
+            CreateTable<EQPlayerModel>("eq_players");
 
             // create tables for result
 
@@ -27,11 +27,11 @@ namespace TournoiServer.DB
             // make storagee for intermediate data
 
             // populate data???
-            Player[] players = [new Player { City = "MSC", FullName = "first" }, new Player { City = "SPB", FullName = "second" }];
+            PlayerModel[] players = [new PlayerModel { City = "MSC", FullName = "first" }, new PlayerModel { City = "SPB", FullName = "second" }];
             AddRows("players", players);
 
-            GetTable<Player>("players");
-            GetTable<Player>("players", "FullName", "City");
+            GetTable<PlayerModel>("players");
+            GetTable("players", "FullName", "City");
         }
 
         public static DBConnection Instance

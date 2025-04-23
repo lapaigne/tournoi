@@ -28,9 +28,7 @@ namespace TournoiServer.DB
             return true;
         }
 
-        private bool ExecuteQuery(string command,
-            out SqliteDataReader reader,
-            string commandName = "Unspecified Operation")
+        private bool ExecuteQuery(string command, out SqliteDataReader? reader, string commandName = "Unspecified Operation")
         {
             _command = Connection.CreateCommand();
             _command.CommandText = command;
@@ -41,7 +39,7 @@ namespace TournoiServer.DB
             }
             catch (SqliteException e)
             {
-                reader = default;
+                reader = null;
                 Console.WriteLine($"ERROR WHEN: {commandName}");
                 Console.WriteLine(e.Message);
                 return false;
@@ -88,8 +86,6 @@ namespace TournoiServer.DB
 
         private bool AddRows<T>(string target, IEnumerable<T> data)
         {
-            if (data is null) { return false; }
-
             IEnumerable<PropertyInfo> properties = typeof(T).GetProperties()
                 .Where(p => !Attribute.IsDefined(p, typeof(DBPrimaryKey)));
 
@@ -99,7 +95,7 @@ namespace TournoiServer.DB
                 var values = properties.Select(p =>
                 {
                     object? value = p.GetValue(d);
-                    string result = (p.PropertyType.IsEnum ? (int)value : value).ToString();
+                    object? result = p.PropertyType.IsEnum && value is not null ? (int)value : value;
                     return "\"" + result + "\"";
                 });
 
@@ -117,16 +113,12 @@ namespace TournoiServer.DB
                 $"Inserted list of values of type {typeof(T).Name} into {target}");
         }
 
-        /// <summary>
-        /// one shall validate data prior to calling the method
-        /// </summary>
-        /// <typeparam name="T">type of the table data</typeparam>
-        /// <param name="target">name of the table</param>
-        /// <param name="data">data of type T that is to be added to the table</param>
-        /// <returns></returns>
         private bool AddRow<T>(string target, T data)
         {
-            if (data is null) { return false; }
+            if (data is null)
+            {
+                return false;
+            }
 
             IEnumerable<PropertyInfo> properties = typeof(T).GetProperties()
                 .Where(p => !Attribute.IsDefined(p, typeof(DBPrimaryKey)));
@@ -134,7 +126,7 @@ namespace TournoiServer.DB
             var values = properties.Select(p =>
             {
                 object? value = p.GetValue(data);
-                string result = (p.PropertyType.IsEnum ? (int)value : value).ToString();
+                object? result = p.PropertyType.IsEnum && value is not null ? (int)value : value;
                 return "\"" + result + "\"";
             });
 
@@ -151,27 +143,39 @@ namespace TournoiServer.DB
             return default;
         }
 
-        private IEnumerable<T>? GetTable<T>(string table, params string[] propertyNames)
+        private List<Dictionary<string, string>> GetTable(string table, params string[] propertyNames)
         {
+            List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
             string propString = string.Join(", ", propertyNames);
 
             string command = $"SELECT {propString} FROM {table}";
 
-            if (ExecuteQuery(command, out var reader, $"Read data of type {typeof(T).Name} from {table}"))
+            if (ExecuteQuery(command, out var reader, $"Read data with fields {propString} from {table}"))
             {
-                if (!reader.HasRows) { return default; }
+                if (reader is null || !reader.HasRows)
+                {
+                    return result;
+                }
+
                 while (reader.Read())
                 {
-                    string current = string.Join("\t", propertyNames.Select(p => reader[p]));
+                    Dictionary<string, string> row = new Dictionary<string, string>();
+                    foreach (string p in propertyNames)
+                    {
+                        row[p] = (string)reader[p];
+                    }
+                    string current = string.Join("\t", row);
                     Console.WriteLine(current);
+                    result.Add(row);
                 }
             }
 
-            return default;
+            return result;
         }
 
-        private IEnumerable<T>? GetTable<T>(string table)
+        private List<T> GetTable<T>(string table)
         {
+            List<T> result = new List<T>();
             IEnumerable<PropertyInfo> properties = typeof(T).GetProperties()
                 .Where(p => !Attribute.IsDefined(p, typeof(DBPrimaryKey)));
 
@@ -179,9 +183,12 @@ namespace TournoiServer.DB
 
             string command = $"SELECT {propString} FROM {table}";
 
-            if (ExecuteQuery(command, out var reader, $"Read data of type {typeof(T).Name} from {table}"))
+            if (ExecuteQuery(command, out var reader, $"Read data with fields {propString} from {table}"))
             {
-                if (!reader.HasRows) { return default; }
+                if (reader is null || !reader.HasRows)
+                {
+                    return result;
+                }
                 while (reader.Read())
                 {
                     string current = string.Join("\t", properties.Select(p => reader[p.Name]));
@@ -189,7 +196,7 @@ namespace TournoiServer.DB
                 }
             }
 
-            return default;
+            return result;
         }
     }
 }

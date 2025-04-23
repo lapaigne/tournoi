@@ -1,12 +1,5 @@
-﻿namespace TournoiServer.Models
+﻿namespace TournoiServer
 {
-    public enum Rank
-    {
-        Top,
-        Second,
-        Unranked
-    }
-
     // ISO/IEC 5218 (2022) standard
     public enum Sex
     {
