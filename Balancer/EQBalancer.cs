@@ -18,11 +18,6 @@ namespace TournoiServer.Balancer
             throw new NotImplementedException();
         }
 
-        public EQSolution GetSolution()
-        {
-            return Solution;
-        }
-
         public void PrepareData(PlayerModel[] players)
         {
             _shortCount = players.Length / 4;

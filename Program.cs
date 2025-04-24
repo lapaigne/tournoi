@@ -1,5 +1,3 @@
-using TournoiServer.DB;
-
 namespace tournoi_server
 {
     public class Program
@@ -10,7 +8,6 @@ namespace tournoi_server
 
             // Add services to the container.
             builder.Services.AddRazorPages();
-            builder.Services.AddSingleton<DBConnection>(DBConnection.Instance);
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
