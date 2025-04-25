@@ -4,18 +4,24 @@ namespace TournoiServer.Balancer
 {
     public class EQBalancer
     {
-        public readonly EQSolution solution;
+        //public readonly EQSolution solution;
 
         private EQPlayer[] _players;
         private int _shortCount;
         private bool _found;
         private ulong _forcedCities;
         private ulong[] _solution;
-        private Dictionary<string, int> _cities = new Dictionary<string, int>();
+        private Dictionary<string, int> _cityNames;
+        private Dictionary<int, ulong> _cityMasks;
+        private List<Delegate> _conditions;
 
         public EQBalancer()
         {
-            throw new NotImplementedException();
+            _cityNames = new Dictionary<string, int>();
+            _cityMasks = new Dictionary<int, ulong>();
+            _conditions = new List<Delegate>();
+
+            //solution = new EQSolution();
         }
 
         public void PrepareData(PlayerModel[] players)
@@ -25,31 +31,100 @@ namespace TournoiServer.Balancer
 
             foreach (PlayerModel player in players)
             {
-                if (!_cities.TryAdd(player.City, 1))
+                if (!_cityNames.TryAdd(player.City, 1))
                 {
-                    _cities[player.City]++;
+                    _cityNames[player.City]++;
                 }
             }
 
-            _players = players.Select(p =>
+            _players = players.Select(p => new EQPlayer
             {
-                var player = new EQPlayer { };
-                return player;
-            }).ToArray();
+                cityMask = _cityMasks[_cityNames[p.City]],
+                sex = p.Sex,
+                rank = p.Rank
+            }).OrderByDescending(p => p.rank)
+                .ThenByDescending(p => p.sex)
+                .ThenBy(p => p.cityMask)
+                .ToArray();
 
-            throw new NotImplementedException();
+            for (int i = 0; i < _players.Length; i++)
+            {
+                _players[i].indexMask = 1UL << i;
+            }
+
+            // potentially has errors due to swapping key and value around - from (ulong, int) to (int, ulong)
+            var cities = _cityMasks.Where(city => city.Key == _shortCount).Select(city => city.Value);
+            _forcedCities = cities.Any() ? cities.Aggregate((acc, n) => acc |= n) : ~0UL;
         }
 
-        // search without any forced cities (cheaper)
-        public void RegularSearch()
+        public void StartSearch()
         {
-            throw new NotImplementedException();
+            EQTeam initial = new EQTeam();
+            initial.AddPlayer(_players[0]);
+            initial.index = 0;
+            initial.available = ~0UL;
+            Search(initial);
         }
 
-        // search with forced cities (requires more checks)
-        public void ForcedSearch()
+        private void Search(EQTeam team)
         {
-            throw new NotImplementedException();
+            if (_found) { return; }
+
+            if (_solution.Last() != 0UL)
+            {
+                _found = true;
+                // return result
+                return;
+            }
+
+            if (team.count == 4)
+            {
+                _solution[team.index] = team.members;
+
+                team.members = default;
+                team.cities = default;
+                team.count = default;
+                team.third = default;
+                team.index++;
+
+                team.AddPlayer(_players[team.index]);
+                Search(team);
+            }
+
+            (int, int) range = team.count switch
+            {
+                1 => (_shortCount, _shortCount * 2),
+                2 or 3 => (_shortCount * 2, _shortCount * 4),
+                _ => (0, 0)
+            };
+
+            if (team.third > range.Item1)
+            {
+                range.Item1 = team.third;
+            }
+
+            EQPlayer previous = new EQPlayer();
+
+            for (int i = range.Item1; i < range.Item2; i++)
+            {
+                if ((team.available & _players[i].indexMask) == 0) { continue; }
+                bool equality = (previous.cityMask == _players[i].cityMask)
+                    && (previous.rank == _players[i].rank);
+                // add optional sex check
+
+                if (equality) { continue; }
+                previous = _players[i];
+
+                throw new NotImplementedException("Add balancer conditions");
+                // go through conditions
+
+                team.AddPlayer(_players[i]);
+
+                // optionally add third player optimization
+
+                Search(team);
+                team.RemovePlayer(_players[i]);
+            }
         }
     }
 }

@@ -8,6 +8,7 @@
         public int index;
         public int count;
         public int third;
+        // TODO: add field for sex for balancing
 
         public int[] GetPlayers()
         {
