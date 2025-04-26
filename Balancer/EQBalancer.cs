@@ -36,12 +36,12 @@ namespace TournoiServer.Balancer
             };
         }
 
-        public void PrepareData(PlayerModel[] players)
+        public void PrepareData(PersonModel[] players)
         {
             _shortCount = players.Length / 4;
             _solution = new ulong[_shortCount];
 
-            foreach (PlayerModel player in players)
+            foreach (PersonModel player in players)
             {
                 if (!_cityNames.TryAdd(player.City, 1))
                 {

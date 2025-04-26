@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace tournoi_server.Pages
+namespace TournoiServer.Pages
 {
     public class IndexModel : PageModel
     {
@@ -14,7 +13,6 @@ namespace tournoi_server.Pages
 
         public void OnGet()
         {
-
         }
     }
 }
