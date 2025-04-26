@@ -17,12 +17,18 @@
 
         public void AddPlayer(EQPlayer player)
         {
-            throw new NotImplementedException();
+            cities |= player.cityMask;
+            members |= player.indexMask;
+            available &= ~player.indexMask;
+            count++;
         }
 
         public void RemovePlayer(EQPlayer player)
         {
-            throw new NotImplementedException();
+            cities &= ~player.cityMask;
+            members &= ~player.indexMask;
+            available |= player.indexMask;
+            count--;
         }
     }
 }

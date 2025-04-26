@@ -4,8 +4,7 @@ namespace TournoiServer.Balancer
 {
     public class EQBalancer
     {
-        //public readonly EQSolution solution;
-
+        private delegate bool Condition(EQTeam team, EQPlayer player);
         private EQPlayer[] _players;
         private int _shortCount;
         private bool _found;
@@ -13,15 +12,28 @@ namespace TournoiServer.Balancer
         private ulong[] _solution;
         private Dictionary<string, int> _cityNames;
         private Dictionary<int, ulong> _cityMasks;
-        private List<Delegate> _conditions;
+        private List<Condition> _conditions;
 
         public EQBalancer()
         {
             _cityNames = new Dictionary<string, int>();
             _cityMasks = new Dictionary<int, ulong>();
-            _conditions = new List<Delegate>();
+            _conditions = new List<Condition>()
+            {
+                // same cities condition
+                delegate (EQTeam team, EQPlayer player)
+                {
+                    return (team.cities & player.cityMask) != 0;
+                },
+                // forced cities condition
+                delegate (EQTeam team, EQPlayer player)
+                {
+                    return team.count >= 2
+                        && (_forcedCities & team.cities) == 0
+                        && (_forcedCities & player.cityMask) == 0;
+                },
 
-            //solution = new EQSolution();
+            };
         }
 
         public void PrepareData(PlayerModel[] players)
@@ -95,7 +107,6 @@ namespace TournoiServer.Balancer
             {
                 1 => (_shortCount, _shortCount * 2),
                 2 or 3 => (_shortCount * 2, _shortCount * 4),
-                _ => (0, 0)
             };
 
             if (team.third > range.Item1)
@@ -110,17 +121,28 @@ namespace TournoiServer.Balancer
                 if ((team.available & _players[i].indexMask) == 0) { continue; }
                 bool equality = (previous.cityMask == _players[i].cityMask)
                     && (previous.rank == _players[i].rank);
-                // add optional sex check
 
                 if (equality) { continue; }
                 previous = _players[i];
 
-                throw new NotImplementedException("Add balancer conditions");
-                // go through conditions
+                bool skip = false;
+                foreach (var condition in _conditions)
+                {
+                    if (condition(team, _players[i]))
+                    {
+                        skip = true;
+                        break;
+                    }
+                }
+
+                if (skip) { continue; }
 
                 team.AddPlayer(_players[i]);
 
-                // optionally add third player optimization
+                if (team.count == 3)
+                {
+                    team.third = i;
+                }
 
                 Search(team);
                 team.RemovePlayer(_players[i]);
