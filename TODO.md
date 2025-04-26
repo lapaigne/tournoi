@@ -1,6 +1,9 @@
+
+REWRITE TO EF CORE
 Add foreign key parser in DBMethods
 Add predefined schemes: 8 through 16
-*Add EQ balancer -- in process
+*Add EQ balancer -- in process*
+	Use list of conditions and remove unnecessary method duplicates
 Add color distribution
 Add Auth
 Change methods: Remove T from GetTable *methods*, return object instead

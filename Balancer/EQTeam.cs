@@ -8,6 +8,7 @@
         public int index;
         public int count;
         public int third;
+        // TODO: add field for sex for balancing
 
         public int[] GetPlayers()
         {
@@ -16,12 +17,18 @@
 
         public void AddPlayer(EQPlayer player)
         {
-            throw new NotImplementedException();
+            cities |= player.cityMask;
+            members |= player.indexMask;
+            available &= ~player.indexMask;
+            count++;
         }
 
         public void RemovePlayer(EQPlayer player)
         {
-            throw new NotImplementedException();
+            cities &= ~player.cityMask;
+            members &= ~player.indexMask;
+            available |= player.indexMask;
+            count--;
         }
     }
 }

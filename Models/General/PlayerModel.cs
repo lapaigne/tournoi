@@ -1,12 +1,15 @@
 ﻿namespace TournoiServer.Models
 {
-    public struct PlayerModel
+    public class PlayerModel
     {
-        [DBPrimaryKey]
         public int Id { get; set; }
-        public string FullName { get; set; }
-        public double Rank { get; set; }
-        public string City { get; set; }
-        public Sex Sex { get; set; }
+
+        public int PersonId { get; set; }
+        public bool EQ { get; set; }
+        public bool ASI { get; set; }
+        public bool SI { get; set; }
+        public bool PSI { get; set; }
+
+        public PersonModel Person { get; set; }
     }
 }

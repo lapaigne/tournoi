@@ -1,6 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using TournoiServer.DB;
 
-namespace tournoi_server
+namespace TournoiServer
 {
     public class Program
     {
@@ -9,8 +10,9 @@ namespace tournoi_server
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite("Data Source=database.db"));
+
             builder.Services.AddRazorPages();
-            builder.Services.AddSingleton<DBConnection>(DBConnection.Instance);
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -19,6 +21,13 @@ namespace tournoi_server
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+            }
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<AppDBContext>();
+                db.Database.EnsureDeleted();
+                db.Database.EnsureCreated();
             }
 
             app.UseHttpsRedirection();
