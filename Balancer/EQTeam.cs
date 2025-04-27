@@ -12,7 +12,22 @@
 
         public int[] GetPlayers()
         {
-            throw new NotImplementedException();
+            int[] players = new int[count];
+            int index = 0;
+            for (int i = 0; i < 64; i++)
+            {
+                if (index == count)
+                {
+                    break;
+                }
+
+                if (((members >> i) % 2) != 0)
+                {
+                    players[index] = i;
+                    i++;
+                }
+            }
+            return players;
         }
 
         public void AddPlayer(EQPlayer player)
