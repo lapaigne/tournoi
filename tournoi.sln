@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tournoi-server", "tournoi-server.csproj", "{D6A9E854-E086-4D94-BFC8-D69CC724A896}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tournoi", "tournoi.csproj", "{16F4CCC4-C12F-423E-B304-A812127BE490}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D6A9E854-E086-4D94-BFC8-D69CC724A896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6A9E854-E086-4D94-BFC8-D69CC724A896}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6A9E854-E086-4D94-BFC8-D69CC724A896}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6A9E854-E086-4D94-BFC8-D69CC724A896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16F4CCC4-C12F-423E-B304-A812127BE490}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16F4CCC4-C12F-423E-B304-A812127BE490}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16F4CCC4-C12F-423E-B304-A812127BE490}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16F4CCC4-C12F-423E-B304-A812127BE490}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {232CDF96-93DD-497C-82E1-9F90DF6ABF79}
+		SolutionGuid = {83B1EE4A-A95C-4107-ADDA-C04F7E765492}
 	EndGlobalSection
 EndGlobal

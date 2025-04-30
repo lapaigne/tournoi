@@ -12,10 +12,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>TournoiServer</RootNamespace>
+    <RootNamespace>Tournoi</RootNamespace>
     <UserSecretsId>c718ba32-29c5-44d7-9ae3-11821c3453e9</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
+    <AssemblyName>tournoi</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

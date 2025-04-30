@@ -1,4 +1,4 @@
-﻿namespace TournoiServer.Balancer
+﻿namespace Tournoi.Balancer
 {
     public struct EQPlayer
     {

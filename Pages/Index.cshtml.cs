@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace TournoiServer.Pages
+namespace Tournoi.Pages
 {
     public class IndexModel : PageModel
     {

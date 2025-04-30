@@ -1,0 +1,11 @@
+﻿@page
+@model SignInModel
+@{
+}
+
+<div id="signin-wrapper">
+    <form method="post" hx-post hx-target="#signin-wrapper" hx-boost="true">
+        <input name="Password" type="password" />
+        <button type="submit">Отправить</button>
+    </form>
+</div>

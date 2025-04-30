@@ -1,6 +1,6 @@
-﻿using TournoiServer.Models;
+﻿using Tournoi.Models;
 
-namespace TournoiServer.Balancer
+namespace Tournoi.Balancer
 {
     public class EQBalancer
     {

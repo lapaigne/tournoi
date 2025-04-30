@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TournoiServer.Models;
+using Tournoi.Models;
 
-namespace TournoiServer.DB
+namespace Tournoi.DB
 {
     public partial class AppDBContext : DbContext
     {

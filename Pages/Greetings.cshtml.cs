@@ -1,10 +1,10 @@
 using Htmx;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using TournoiServer.DB;
-using TournoiServer.Models;
+using Tournoi.DB;
+using Tournoi.Models;
 
-namespace TournoiServer.Pages
+namespace Tournoi.Pages
 {
     public class GreetingsModel : PageModel
     {
@@ -19,6 +19,7 @@ namespace TournoiServer.Pages
         {
             if (Request.IsHtmx())
             {
+                string testString = "THIS IS A TEST";
                 PersonModel[] people =
                 [
                     new PersonModel { FullName = "ABC", City = "MSC", Rank = 5325.33, Sex = Sex.Male },
@@ -27,7 +28,7 @@ namespace TournoiServer.Pages
                 _context.People.AddRange(people);
                 _context.SaveChanges();
 
-                return Content($"<span>Bruh</span>", "text/html");
+                return Content($"<span>{testString}</span>", "text/html");
             }
 
             return Page();

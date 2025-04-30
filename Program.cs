@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using TournoiServer.DB;
+using Tournoi.DB;
 
-namespace TournoiServer
+namespace Tournoi
 {
     public class Program
     {

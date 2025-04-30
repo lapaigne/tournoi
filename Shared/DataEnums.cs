@@ -1,4 +1,4 @@
-﻿namespace TournoiServer
+﻿namespace Tournoi
 {
     // ISO/IEC 5218 (2022) standard
     public enum Sex

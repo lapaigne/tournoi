@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TournoiServer.Models
+namespace Tournoi.Models
 {
     [Table("People")]
     public class PersonModel

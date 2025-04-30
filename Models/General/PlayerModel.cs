@@ -1,4 +1,4 @@
-﻿namespace TournoiServer.Models
+﻿namespace Tournoi.Models
 {
     public class PlayerModel
     {
