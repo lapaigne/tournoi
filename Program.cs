@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Tournoi.Battles;
 using Tournoi.DB;
 
 namespace Tournoi
@@ -11,6 +12,7 @@ namespace Tournoi
 
             // Add services to the container.
             builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite("Data Source=database.db"));
+            builder.Services.AddSingleton<BattlePlanner>();
 
             builder.Services.AddRazorPages();
             var app = builder.Build();
