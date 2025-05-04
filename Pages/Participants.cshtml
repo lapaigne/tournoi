@@ -1,0 +1,63 @@
+﻿@page
+@model ParticipantsModel
+@{
+}
+
+<div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Поиск по..." oninput="filterTable()" />
+</div>
+
+<div class="scrollable">
+    <table id="playersTable">
+        <thead>
+            <tr>
+                <th class="sortable" onclick="sortTable(0)">Full Name</th>
+                <th class="sortable" onclick="sortTable(1)">City</th>
+                <th>SI</th>
+                <th>ASI</th>
+                <th>EQ</th>
+                <th>PSI</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Participants)
+            {
+                <tr>
+                    <td>@p.FullName</td>
+                    <td>@p.City</td>
+                    <td>@(p.SI ? "✓" : "")</td>
+                    <td>@(p.ASI ? "✓" : "")</td>
+                    <td>@(p.EQ ? "✓" : "")</td>
+                    <td>@(p.PSI ? "✓" : "")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // JavaScript for sorting and filtering
+    function filterTable() {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#playersTable tbody tr");
+
+        rows.forEach(row => {
+            const name = row.children[0].textContent.toLowerCase();
+            const city = row.children[1].textContent.toLowerCase();
+            row.style.display = (name.includes(input) || city.includes(input)) ? "" : "none";
+        });
+    }
+
+    function sortTable(column) {
+        const table = document.getElementById("playersTable");
+        const rows = Array.from(table.tBodies[0].rows);
+
+        rows.sort((a, b) => {
+            const textA = a.cells[column].textContent.trim().toLowerCase();
+            const textB = b.cells[column].textContent.trim().toLowerCase();
+            return textA.localeCompare(textB);
+        });
+
+        rows.forEach(row => table.tBodies[0].appendChild(row));
+    }
+</script>

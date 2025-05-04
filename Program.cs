@@ -28,7 +28,6 @@ namespace Tournoi
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-                db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
             }
 
