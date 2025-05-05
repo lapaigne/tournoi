@@ -14,6 +14,16 @@ namespace Tournoi
             builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite("Data Source=database.db"));
             builder.Services.AddSingleton<BattlePlanner>();
 
+            builder.Services.AddAuthentication().AddCookie("Cookies", options =>
+            {
+                options.Cookie.Name = "jac";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(3);
+                options.SlidingExpiration = true;
+                options.LoginPath = "/SignIn";
+            });
+
+            builder.Services.AddAuthorization();
+
             builder.Services.AddRazorPages();
             var app = builder.Build();
 
@@ -36,6 +46,7 @@ namespace Tournoi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapRazorPages();
