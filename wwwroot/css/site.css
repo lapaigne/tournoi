@@ -26,3 +26,24 @@ body {
 .container {
     max-width: 100%; 
 }
+
+#edit-people-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+#add-display-player-form {
+    flex: 1; /* Takes remaining space */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#people-table-container {
+    flex: 1; /* Takes equal space as the form */
+    height: 50vh; /* Limit height to half the viewport */
+    overflow-y: auto; /* Only the table container scrolls */
+    border: 1px solid #ddd; /* Optional: Add border for clarity */
+    padding: 10px;
+    box-sizing: border-box;
+}

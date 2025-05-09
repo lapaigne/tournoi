@@ -18,6 +18,9 @@ namespace Tournoi.Pages
         [BindProperty]
         public List<PlayerDisplay> PlayerDisplays { get; set; }
 
+        [BindProperty]
+        public PlayerDisplay Player { get; set; }
+
         public IActionResult OnGet()
         {
             LoadPlayerDisplays();
@@ -33,26 +36,27 @@ namespace Tournoi.Pages
             }
             else if (action == "edit")
             {
-                var name = Request.Form["name"];
-                return HandleEditDisplayPlayer(name);
+                return HandleEditDisplayPlayer();
             }
             else if (action == "delete")
             {
-                var name = Request.Form["name"];
-                return HandleDeleteDisplayPlayer(name);
+                return HandleDeleteDisplayPlayer();
             }
 
             return BadRequest("Invalid action.");
         }
 
+        // Load players into the display model
         private void LoadPlayerDisplays()
         {
             PlayerDisplays = _context.Players
                 .Include(p => p.Person)
                 .Select(p => new PlayerDisplay
                 {
+                    Id = p.PersonId,
                     FullName = p.Person.FullName,
                     City = p.Person.City,
+                    Rank = p.Person.Rank,
                     Sex = p.Person.Sex,
                     SI = p.SI,
                     EQ = p.EQ,
@@ -61,13 +65,15 @@ namespace Tournoi.Pages
                 }).ToList();
         }
 
+        // Add a new player
         private IActionResult HandleAddDisplayPlayer()
         {
             var person = new PersonModel
             {
                 FullName = Request.Form["FullName"],
                 City = Request.Form["City"],
-                Sex = (Sex)int.Parse(Request.Form["Sex"])
+                Sex = (Sex)int.Parse(Request.Form["Sex"]),
+                Rank = int.Parse(Request.Form["Rank"]),
             };
 
             var player = new PlayerModel
@@ -89,44 +95,65 @@ namespace Tournoi.Pages
             return Partial("_PeopleTable", PlayerDisplays);
         }
 
-        private IActionResult HandleEditDisplayPlayer(string name)
+        // Edit an existing player
+        private IActionResult HandleEditDisplayPlayer()
         {
-            var person = _context.People.FirstOrDefault(p => p.FullName == name);
-            if (person == null) return NotFound();
+            int id = int.Parse(Request.Form["Id"]);
+            var player = _context.Players.Include(p => p.Person).FirstOrDefault(p => p.PersonId == id);
 
-            var player = _context.Players.FirstOrDefault(p => p.PersonId == person.Id);
+            if (player == null) return NotFound();
 
-            person.City = Request.Form["City"];
-            person.Sex = (Sex)int.Parse(Request.Form["Sex"]);
-
-            if (player != null)
-            {
-                player.SI = Request.Form["SI"] == "on";
-                player.EQ = Request.Form["EQ"] == "on";
-                player.ASI = Request.Form["ASI"] == "on";
-                player.PSI = Request.Form["PSI"] == "on";
-            }
+            player.Person.FullName = Request.Form["FullName"];
+            player.Person.City = Request.Form["City"];
+            player.Person.Sex = (Sex)int.Parse(Request.Form["Sex"]);
+            player.Person.Rank = int.Parse(Request.Form["Rank"]);
+            player.SI = Request.Form["SI"] == "on";
+            player.EQ = Request.Form["EQ"] == "on";
+            player.ASI = Request.Form["ASI"] == "on";
+            player.PSI = Request.Form["PSI"] == "on";
 
             _context.SaveChanges();
             LoadPlayerDisplays();
             return Partial("_PeopleTable", PlayerDisplays);
         }
 
-        private IActionResult HandleDeleteDisplayPlayer(string name)
+        // Delete a player
+        private IActionResult HandleDeleteDisplayPlayer()
         {
-            var person = _context.People.FirstOrDefault(p => p.FullName == name);
-            if (person != null)
+            int id = int.Parse(Request.Form["Id"]);
+            var player = _context.Players.Include(p => p.Person).FirstOrDefault(p => p.PersonId == id);
+
+            if (player != null)
             {
-                var player = _context.Players.FirstOrDefault(p => p.PersonId == person.Id);
-
-                if (player != null) _context.Players.Remove(player);
-                _context.People.Remove(person);
-
+                _context.Players.Remove(player);
+                _context.People.Remove(player.Person);
                 _context.SaveChanges();
             }
 
             LoadPlayerDisplays();
             return Partial("_PeopleTable", PlayerDisplays);
+        }
+
+        // Fetch a player for editing
+        public IActionResult OnPostGetPlayer([FromBody] int id)
+        {
+            var player = _context.Players.Include(p => p.Person).FirstOrDefault(p => p.PersonId == id);
+            if (player == null) return NotFound();
+
+            Player = new PlayerDisplay
+            {
+                Id = player.PersonId,
+                FullName = player.Person.FullName,
+                City = player.Person.City,
+                Rank = player.Person.Rank,
+                Sex = player.Person.Sex,
+                SI = player.SI,
+                EQ = player.EQ,
+                ASI = player.ASI,
+                PSI = player.PSI
+            };
+
+            return Partial("EditPlayerPanel", Player); // Replace "_PlayerForm" with the proper form partial view name
         }
     }
 }

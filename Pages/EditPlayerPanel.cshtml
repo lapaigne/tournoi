@@ -1,0 +1,59 @@
+﻿@model PlayerDisplay
+
+<form method="post"
+      hx-post="/EditPeople/SavePlayer"
+      hx-target="#people-table"
+      hx-swap="outerHTML">
+    <input type="hidden" id="player-id" name="Id" value="@Model.Id" />
+
+    <h3>@((Model.Id == 0) ? "Add Player" : "Edit Player")</h3>
+
+    <div>
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" name="FullName" value="@Model.FullName" required />
+    </div>
+    <div>
+        <label for="city">City</label>
+        <input type="text" id="city" name="City" value="@Model.City" required />
+    </div>
+    <div>
+        <label for="rank">Rank</label>
+        <input type="number" id="rank" name="Rank" value="@Model.Rank" />
+    </div>
+    <div>
+        <label>Sex</label>
+        <div>
+            <input type="radio" id="sex-none" name="Sex" value="0" @(Model.Sex == Sex.NotKnown ? "checked" : "") />
+            <label for="sex-none">None</label>
+        </div>
+        <div>
+            <input type="radio" id="sex-male" name="Sex" value="1" @(Model.Sex == Sex.Male ? "checked" : "") />
+            <label for="sex-male">Male</label>
+        </div>
+        <div>
+            <input type="radio" id="sex-female" name="Sex" value="2" @(Model.Sex == Sex.Female ? "checked" : "") />
+            <label for="sex-female">Female</label>
+        </div>
+        <div>
+            <input type="radio" id="sex-na" name="Sex" value="9" @(Model.Sex == Sex.NotApplicable ? "checked" : "") />
+            <label for="sex-na">Non-applicable</label>
+        </div>
+    </div>
+    <div>
+        <label for="si">SI</label>
+        <input type="checkbox" id="si" name="SI" @(Model.SI ? "checked" : "") />
+    </div>
+    <div>
+        <label for="eq">EQ</label>
+        <input type="checkbox" id="eq" name="EQ" @(Model.EQ ? "checked" : "") />
+    </div>
+    <div>
+        <label for="asi">ASI</label>
+        <input type="checkbox" id="asi" name="ASI" @(Model.ASI ? "checked" : "") />
+    </div>
+    <div>
+        <label for="psi">PSI</label>
+        <input type="checkbox" id="psi" name="PSI" @(Model.PSI ? "checked" : "") />
+    </div>
+    <button type="submit">@((Model.Id == 0) ? "Add" : "Save")</button>
+</form>

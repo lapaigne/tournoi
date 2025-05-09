@@ -1,11 +1,11 @@
 ﻿@model List<PlayerDisplay>
 
-<h3>People and Player Data</h3>
 <table>
     <thead>
         <tr>
             <th>Full Name</th>
             <th>City</th>
+            <th>Rank</th>
             <th>Sex</th>
             <th>SI</th>
             <th>EQ</th>
@@ -15,19 +15,34 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var displayPlayer in Model)
+        @foreach (var player in Model)
         {
-            <tr id="display-player-@displayPlayer.FullName">
-                <td>@displayPlayer.FullName</td>
-                <td>@displayPlayer.City</td>
-                <td>@displayPlayer.Sex</td>
-                <td>@(displayPlayer.SI ? "✔" : "✘")</td>
-                <td>@(displayPlayer.EQ ? "✔" : "✘")</td>
-                <td>@(displayPlayer.ASI ? "✔" : "✘")</td>
-                <td>@(displayPlayer.PSI ? "✔" : "✘")</td>
+            <tr id="player-row-@player.Id">
+                <td>@player.FullName</td>
+                <td>@player.City</td>
+                <td>@player.Rank</td>
+                <td>@player.Sex</td>
+                <td>@(player.SI ? "✔" : "✘")</td>
+                <td>@(player.EQ ? "✔" : "✘")</td>
+                <td>@(player.ASI ? "✔" : "✘")</td>
+                <td>@(player.PSI ? "✔" : "✘")</td>
                 <td>
-                    <button hx-post="/EditPeople" hx-vals='{"action": "edit", "name": "@displayPlayer.FullName"}' hx-target="#edit-display-player-form" hx-swap="outerHTML">Edit</button>
-                    <button hx-post="/EditPeople" hx-vals='{"action": "delete", "name": "@displayPlayer.FullName"}' hx-target="#display-player-@displayPlayer.FullName" hx-swap="outerHTML">Delete</button>
+                    <!-- Edit Button -->
+                    <button hx-post="/EditPeople/GetPlayer"
+                            hx-vals='{"id": "@player.Id"}'
+                            hx-target="#player-row-@player.Id"
+                            hx-swap="outerHTML">
+                        Edit
+                    </button>
+
+                    <!-- Delete Button -->
+                    <button hx-post="/EditPeople/DeletePlayer"
+                            hx-vals='{"id": "@player.Id"}'
+                            hx-confirm="Are you sure you want to delete this player?"
+                            hx-target="#player-row-@player.Id"
+                            hx-swap="outerHTML">
+                        Delete
+                    </button>
                 </td>
             </tr>
         }

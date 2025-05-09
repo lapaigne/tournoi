@@ -7,9 +7,11 @@ namespace Tournoi.Pages
 {
     public class PlayerDisplay
     {
+        public int Id { get; set; }
         public string FullName { get; set; }
         public string City { get; set; }
         public Sex Sex { get; set; }
+        public double Rank { get; set; }
         public bool SI { get; set; }
         public bool EQ { get; set; }
         public bool ASI { get; set; }
@@ -35,9 +37,11 @@ namespace Tournoi.Pages
                 .Include(p => p.Person)
                 .Select(p => new PlayerDisplay
                 {
+                    Id = p.PersonId,
                     FullName = p.Person.FullName,
                     City = p.Person.City,
                     Sex = p.Person.Sex,
+                    Rank = p.Person.Rank,
                     SI = p.SI,
                     ASI = p.ASI,
                     EQ = p.EQ,
