@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Tournoi.DB;
@@ -15,6 +16,7 @@ namespace Tournoi.Pages
         public bool PSI { get; set; }
     }
 
+    [Authorize]
     public class ParticipantsModel : PageModel
     {
         private readonly AppDBContext _context;

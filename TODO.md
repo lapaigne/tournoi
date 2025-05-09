@@ -3,6 +3,13 @@ Meta info:
 
 ---
 
+Fix double headers/footers:
+	Make all pages partial/views
+	Apply HX-Redirect
+	@Layout = null *does not* work
+
+---
+
 Register EQ Balancer as singleton???
 Setup access for balancer
 

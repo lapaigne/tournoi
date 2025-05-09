@@ -13,7 +13,6 @@ namespace Tournoi
             // Add services to the container.
             builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite("Data Source=database.db"));
             builder.Services.AddSingleton<BattlePlanner>();
-
             builder.Services.AddAuthentication().AddCookie("Cookies", options =>
             {
                 options.Cookie.Name = "jac";

@@ -10,7 +10,7 @@ namespace Tournoi.Pages
     {
         [BindProperty]
         public string Token { get; set; }
-        private string _token = "";
+        private string _token = "234";
 
         public void OnGet() { }
 
