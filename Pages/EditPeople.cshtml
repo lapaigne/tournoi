@@ -1,0 +1,69 @@
+﻿@page
+@model EditPeopleModel 
+@{
+    Layout = "_Layout";
+}
+
+<h1>Edit People</h1>
+
+<div id="add-display-player-form">
+    <form method="post" hx-post="/EditPeople" hx-vals='{"action": "add"}' hx-target="#people-table" hx-swap="outerHTML">
+        <h3>Add Display Player</h3>
+        <div>
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" name="FullName" required />
+        </div>
+        <div>
+            <label for="city">City</label>
+            <input type="text" id="city" name="City" required/>
+        </div>
+        <div>
+            <label for="rank">Rank</label>
+            <input type="number" id="rank" name="Rank" />
+        </div>
+        <div>
+            <label>Sex</label>
+            <div style="display: none;"> 
+                <input type="radio" id="sex-none" name="Sex" value="0" checked />
+                <label for="sex-none">None</label>
+            </div>
+            <div>
+                <input type="radio" id="sex-male" name="Sex" value="1" />
+                <label for="sex-male">Male</label>
+            </div>
+            <div>
+                <input type="radio" id="sex-female" name="Sex" value="2" />
+                <label for="sex-female">Female</label>
+            </div>
+            <div>
+                <input type="radio" id="sex-na" name="Sex" value="9" />
+                <label for="sex-na">Non-applicable</label>
+            </div>
+        </div>
+        <div>
+            <label for="si">SI</label>
+            <input type="checkbox" id="si" name="SI" />
+        </div>
+        <div>
+            <label for="eq">EQ</label>
+            <input type="checkbox" id="eq" name="EQ" />
+        </div>
+        <div>
+            <label for="asi">ASI</label>
+            <input type="checkbox" id="asi" name="ASI" />
+        </div>
+        <div>
+            <label for="psi">PSI</label>
+            <input type="checkbox" id="psi" name="PSI" />
+        </div>
+        <button type="submit">Add</button>
+    </form>
+</div>
+
+<!-- People Table -->
+<div id="people-table">
+    @await Html.PartialAsync("_PeopleTable", Model.PlayerDisplays)
+</div>
+
+<!-- Edit Display Player Form (Hidden by Default) -->
+<div id="edit-display-player-form"></div>

@@ -1,0 +1,35 @@
+﻿@model List<PlayerDisplay>
+
+<h3>People and Player Data</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>City</th>
+            <th>Sex</th>
+            <th>SI</th>
+            <th>EQ</th>
+            <th>ASI</th>
+            <th>PSI</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var displayPlayer in Model)
+        {
+            <tr id="display-player-@displayPlayer.FullName">
+                <td>@displayPlayer.FullName</td>
+                <td>@displayPlayer.City</td>
+                <td>@displayPlayer.Sex</td>
+                <td>@(displayPlayer.SI ? "✔" : "✘")</td>
+                <td>@(displayPlayer.EQ ? "✔" : "✘")</td>
+                <td>@(displayPlayer.ASI ? "✔" : "✘")</td>
+                <td>@(displayPlayer.PSI ? "✔" : "✘")</td>
+                <td>
+                    <button hx-post="/EditPeople" hx-vals='{"action": "edit", "name": "@displayPlayer.FullName"}' hx-target="#edit-display-player-form" hx-swap="outerHTML">Edit</button>
+                    <button hx-post="/EditPeople" hx-vals='{"action": "delete", "name": "@displayPlayer.FullName"}' hx-target="#display-player-@displayPlayer.FullName" hx-swap="outerHTML">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
