@@ -27,19 +27,16 @@
                 <td>@(player.ASI ? "✔" : "✘")</td>
                 <td>@(player.PSI ? "✔" : "✘")</td>
                 <td>
-                    <!-- Edit Button -->
-                    <button hx-post="/EditPeople/GetPlayer"
-                            hx-vals='{"id": "@player.Id"}'
-                            hx-target="#player-row-@player.Id"
-                            hx-swap="outerHTML">
+                    <button hx-post="/EditPeople?handler=EditPlayer" 
+                            hx-params="id=@player.Id"
+                            hx-target="#edit-display-player-form"
+                            hx-swap="innerHTML">
                         Edit
-                    </button>
-
-                    <!-- Delete Button -->
+                    </button> 
                     <button hx-post="/EditPeople/DeletePlayer"
-                            hx-vals='{"id": "@player.Id"}'
+                            hx-vals="{'id': '@player.Id'}"
                             hx-confirm="Are you sure you want to delete this player?"
-                            hx-target="#player-row-@player.Id"
+                            hx-target="#display-player-@player.Id"
                             hx-swap="outerHTML">
                         Delete
                     </button>

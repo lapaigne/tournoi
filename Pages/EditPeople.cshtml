@@ -4,17 +4,14 @@
     Layout = "_Layout";
 }
 
-<h1>Edit People</h1>
-
 <div id="edit-people-container">
+    <!-- Panel on the Left -->
     <div id="edit-display-player-form">
-        <div hx-get="/EditPlayerPanel"
-             hx-trigger="click"
-             hx-target="#edit-display-player-form"
-             hx-swap="innerHTML">
-        </div>
+        <!-- Form will dynamically load here -->
+        @await Html.PartialAsync("EditPlayerPanel", Model.Player)
     </div>
 
+    <!-- Table on the Right -->
     <div id="people-table-container">
         <div id="people-table">
             @await Html.PartialAsync("_PeopleTable", Model.PlayerDisplays)

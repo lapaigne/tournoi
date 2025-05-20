@@ -4,9 +4,9 @@
       hx-post="/EditPeople/SavePlayer"
       hx-target="#people-table"
       hx-swap="outerHTML">
-    <input type="hidden" id="player-id" name="Id" value="@Model.Id" />
+    <input type="hidden" id="player-id" name="Id" value="@Model?.Id ?? 0" />
 
-    <h3>@((Model.Id == 0) ? "Add Player" : "Edit Player")</h3>
+    <h3>@((Model?.Id ?? 0) == 0 ? "Add Player" : "Edit Player")</h3>
 
     <div>
         <label for="fullname">Full Name</label>
@@ -55,5 +55,7 @@
         <label for="psi">PSI</label>
         <input type="checkbox" id="psi" name="PSI" @(Model.PSI ? "checked" : "") />
     </div>
-    <button type="submit">@((Model.Id == 0) ? "Add" : "Save")</button>
+
+    <button type="submit">Add</button>
+    <button type="button" onclick="document.getElementById('player-form').reset();">Clear</button>
 </form>
