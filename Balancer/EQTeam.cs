@@ -33,14 +33,6 @@ namespace Tournoi.Balancer
             return players;
         }
 
-        public void IsValid()
-        {
-            if (BitOperations.PopCount(cities) != count)
-            {
-                throw new Exception($"{cities.ToString("B64")}");
-            }
-        }
-
         public void AddPlayer(EQPlayer player)
         {
             cities |= player.cityMask;
@@ -51,7 +43,6 @@ namespace Tournoi.Balancer
                 hasFemale = true;
             }
             count++;
-            IsValid();
         }
 
         public void RemovePlayer(EQPlayer player)

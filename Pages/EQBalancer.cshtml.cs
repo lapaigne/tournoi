@@ -38,10 +38,7 @@ namespace Tournoi.Pages
                 await _context.SaveChangesAsync();
             }
 
-            // Load players who can be balanced
-            var players = _context.People
-                .OrderByDescending(p => p.Rank)
-                .ToArray();
+            var players = _context.People.ToArray();
 
             // Early out: only balance if divisible by 4
             if (players.Length < 4 || players.Length % 4 != 0)
@@ -59,16 +56,17 @@ namespace Tournoi.Pages
             // Collect solution
             var solution = balancer.GetSolution();
             var teamsToAdd = new List<EQTeamModel>();
+
             foreach (var group in solution)
             {
                 // The group is a List<int> of player indices
                 if (group.Count != 4) continue;
                 var team = new EQTeamModel
                 {
-                    Player1Id = players[group[0]].Id,
-                    Player2Id = players[group[1]].Id,
-                    Player3Id = players[group[2]].Id,
-                    Player4Id = players[group[3]].Id
+                    Player1Id = players[group[0] - 1].Id,
+                    Player2Id = players[group[1] - 1].Id,
+                    Player3Id = players[group[2] - 1].Id,
+                    Player4Id = players[group[3] - 1].Id
                 };
                 teamsToAdd.Add(team);
             }

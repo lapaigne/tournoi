@@ -4,6 +4,7 @@ namespace Tournoi.Balancer
 {
     public class EQBalancer
     {
+        private int _count = 0;
         private delegate bool Condition(EQTeam team, EQPlayer player);
         private EQPlayer[] _players;
         private int _shortCount;
@@ -17,7 +18,6 @@ namespace Tournoi.Balancer
         public List<List<int>> GetSolution()
         {
             var result = new List<List<int>>();
-            if (_solution == null) return result;
             for (int i = 0; i < _solution.Length; i++)
             {
                 var teamMask = _solution[i];
@@ -25,11 +25,13 @@ namespace Tournoi.Balancer
                 for (int j = 0; j < 64; j++)
                 {
                     if (((teamMask >> j) & 1UL) != 0)
-                        team.Add(j);
+                    {
+                        team.Add(_players[j].trueId);
+                    }
                 }
-                if (team.Any())
-                    result.Add(team);
+                result.Add(team);
             }
+
             return result;
         }
 
@@ -79,7 +81,8 @@ namespace Tournoi.Balancer
             {
                 cityMask = _cityMasks[p.City],
                 sex = p.Sex,
-                rank = p.Rank
+                rank = p.Rank,
+                trueId = p.Id,
             }).OrderByDescending(p => p.rank)
                 .ThenByDescending(p => p.sex)
                 .ThenBy(p => p.cityMask)
@@ -92,12 +95,6 @@ namespace Tournoi.Balancer
 
             var cities = _cityCount.Where(city => city.Value == _shortCount).Select(city => _cityMasks[city.Key]);
             _forcedCities = cities.Any() ? cities.Aggregate((acc, n) => acc |= n) : ~0UL;
-
-            var p = players.Select(p => p.City + " " + _cityMasks[p.City]);
-            var debug = _players.Select(p => p.cityMask);
-            var ps = string.Join("\n", p);
-            var ds = string.Join("\n", debug);
-            /*throw new Exception(ps);*/
         }
 
         public void StartSearch()
@@ -113,10 +110,17 @@ namespace Tournoi.Balancer
         {
             if (_found) { return; }
 
+            _count++;
 
-            /*if (_solution.Last() != 0UL)*/
-            if (_solution[1] != 0UL)
+            if (_count % 1000_000 == 0)
             {
+                Console.WriteLine(_count);
+            }
+
+            if (_solution[_shortCount - 1] != 0UL)
+            /*if (_solution[1] != 0UL)*/
+            {
+                Console.WriteLine(_count);
                 _found = true;
                 return;
             }
@@ -127,6 +131,7 @@ namespace Tournoi.Balancer
 
                 team.members = default;
                 team.cities = default;
+                team.hasFemale = default;
                 team.count = default;
                 team.third = default;
                 team.index++;
@@ -151,23 +156,33 @@ namespace Tournoi.Balancer
             for (int i = range.Item1; i < range.Item2; i++)
             {
                 if ((team.available & _players[i].indexMask) == 0) { continue; }
-                bool equality = (previous.cityMask == _players[i].cityMask)
-                    && (previous.rank == _players[i].rank);
 
+                bool equality = (previous.cityMask == _players[i].cityMask)
+                    && (previous.rank == _players[i].rank)
+                    && (previous.sex == Sex.Female) && (_players[i].sex == Sex.Female);
                 if (equality) { continue; }
                 previous = _players[i];
 
-                bool skip = false;
-                foreach (var condition in _skipConditions)
-                {
-                    if (condition(team, _players[i]))
-                    {
-                        skip = true;
-                        break;
-                    }
-                }
+                if ((team.cities & _players[i].cityMask) != 0) { continue; }
 
-                if (skip) { continue; }
+                if (team.count >= 2
+                        && (_forcedCities & team.cities) == 0
+                        && (_forcedCities & _players[i].cityMask) == 0) { continue; }
+
+                if (team.hasFemale && _players[i].sex == Sex.Female) { continue; }
+
+                /**/
+                /*bool skip = false;*/
+                /*foreach (var condition in _skipConditions)*/
+                /*{*/
+                /*    if (condition(team, _players[i]))*/
+                /*    {*/
+                /*        skip = true;*/
+                /*        break;*/
+                /*    }*/
+                /*}*/
+
+                /*if (skip) { continue; }*/
 
                 team.AddPlayer(_players[i]);
 
