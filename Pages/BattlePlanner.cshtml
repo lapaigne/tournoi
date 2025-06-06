@@ -1,4 +1,82 @@
 ﻿@page
-@model BattlePlanerModel
+@model Tournoi.Pages.ViewSchemesModel
 @{
+Layout = "_Layout";
 }
+<h2>Battle Schemes (7 random players)</h2>
+@if (Model.SelectedPlayers.Count < 7) { <div
+    style="color:#856404;background:#fff3cd;border:1px solid #ffeeba;border-radius:4px;padding:1rem;margin-bottom:1rem;">
+    Not enough players in the database to make a 7-player scheme.
+    </div>
+    }
+    else
+    {
+    <div style="display: flex; flex-direction: row; gap: 2rem; align-items: flex-start; min-height: 60vh;">
+        <!-- Left: Players list -->
+        <div
+            style="flex: 0 0 260px; max-width: 300px; min-width: 180px; background: #f8fafc; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; box-sizing: border-box;">
+            <b>Игроки:</b>
+            <ul style="padding-left: 1.2em; margin-top: 1em; margin-bottom: 0;">
+                @foreach (var player in Model.SelectedPlayers)
+                {
+                <li>@player</li>
+                }
+            </ul>
+        </div>
+        <!-- Right: Battles -->
+        <div style="flex: 1 1 0; display: flex; flex-direction: column;">
+            <div style="display:flex;justify-content:center;gap:2rem;margin-bottom:2rem;flex-wrap:wrap;">
+                @for (int i = 0; i < 4 && i < Model.Battles.Count; i++) { <div
+                    style="border:1px solid #bbb;border-radius:10px;padding:1rem;background:#fafaff;box-shadow:0 0 12px rgba(0,0,0,0.07);min-width:260px;max-width:380px;width:100%;margin-bottom:0;">
+                    <h4>Бой @(@i + 1)</h4>
+                    <table style="width:100%;border-collapse:collapse;">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid #ddd;padding:0.5rem;min-width:180px;width:75%;">Игрок</th>
+                                <th style="border:1px solid #ddd;padding:0.5rem;width:12%;">Счет</th>
+                                <th style="border:1px solid #ddd;padding:0.5rem;width:13%;">Место</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var player in Model.Battles[i])
+                            {
+                            <tr>
+                                <td style="border:1px solid #ddd;padding:0.5rem;min-width:180px;width:75%;">@player</td>
+                                <td style="border:1px solid #ddd;padding:0.5rem;width:12%;"></td>
+                                <td style="border:1px solid #ddd;padding:0.5rem;width:13%;"></td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+            </div>
+            }
+        </div>
+        <div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;">
+            @for (int i = 4; i < 7 && i < Model.Battles.Count; i++) { <div
+                style="border:1px solid #bbb;border-radius:10px;padding:1rem;background:#fafaff;box-shadow:0 0 12px rgba(0,0,0,0.07);min-width:260px;max-width:380px;width:100%;margin-bottom:0;">
+                <h4>Battle @(@i + 1)</h4>
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="border:1px solid #ddd;padding:0.5rem;min-width:180px;width:75%;">Player</th>
+                            <th style="border:1px solid #ddd;padding:0.5rem;width:12%;">Points</th>
+                            <th style="border:1px solid #ddd;padding:0.5rem;width:13%;">Place</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var player in Model.Battles[i])
+                        {
+                        <tr>
+                            <td style="border:1px solid #ddd;padding:0.5rem;min-width:180px;width:75%;">@player</td>
+                            <td style="border:1px solid #ddd;padding:0.5rem;width:12%;"></td>
+                            <td style="border:1px solid #ddd;padding:0.5rem;width:13%;"></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+        </div>
+        }
+    </div>
+    </div>
+    </div>
+    }

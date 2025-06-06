@@ -4,9 +4,44 @@
 ViewData["Title"] = "EQ Balancer";
 }
 
-<h2>EQ Balancer</h2>
+<style>
+    .table-container {
+        margin-left: 50px;
+        margin-right: 50px;
+        /* Or use margin: 0 50px; for shorthand */
+    }
 
-<form method="post" asp-page-handler="Generate">
+    .eq-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .eq-table th,
+    .eq-table td {
+        padding: 8px 12px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    .eq-table th.team-number,
+    .eq-table td.team-number {
+        width: 30px;
+        /* Adjust as needed between 20-40px */
+        min-width: 20px;
+        max-width: 40px;
+        text-align: center;
+    }
+
+    .eq-table th.player-data,
+    .eq-table td.player-data {
+        width: 375px;
+        /* Between 350-400px */
+        min-width: 350px;
+        max-width: 400px;
+    }
+</style>
+
+<form method="post" asp-page-handler="Generate" style="margin-bottom: 25px;">
     <button type="submit" class="btn btn-primary">Generate Teams</button>
 </form>
 
@@ -22,28 +57,29 @@ ViewData["Title"] = "EQ Balancer";
 
 @if (Model.Teams?.Any() == true)
 {
-<h3>Generated Teams</h3>
-<table class="table table-bordered" style="margin: 50px; ">
-    <thead>
-        <tr>
-            <th>Team #</th>
-            <th>Player 1</th>
-            <th>Player 2</th>
-            <th>Player 3</th>
-            <th>Player 4</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @for (int i = 0; i < Model.Teams.Count; i++) { var team=Model.Teams[i]; <tr>
-            <td>@(i + 1)</td>
-            <td>@team.Player1?.FullName (@team.Player1?.City) </td>
-            <td>@team.Player2?.FullName (@team.Player2?.City) </td>
-            <td>@team.Player3?.FullName (@team.Player3?.City) </td>
-            <td>@team.Player4?.FullName (@team.Player4?.City) </td>
+<div class="table-container">
+    <table class="eq-table">
+        <thead>
+            <tr>
+                <th>Team #</th>
+                <th>Player 1</th>
+                <th>Player 2</th>
+                <th>Player 3</th>
+                <th>Player 4</th>
             </tr>
-            }
-    </tbody>
+        </thead>
 
-</table>
+        <tbody>
+            @for (int i = 0; i < Model.Teams.Count; i++) { var team=Model.Teams[i]; <tr>
+                <td>@(i + 1)</td>
+                <td>@team.Player1?.FullName (@team.Player1?.City) </td>
+                <td>@team.Player2?.FullName (@team.Player2?.City) </td>
+                <td>@team.Player3?.FullName (@team.Player3?.City) </td>
+                <td>@team.Player4?.FullName (@team.Player4?.City) </td>
+                </tr>
+                }
+        </tbody>
+
+    </table>
+</div>
 }
