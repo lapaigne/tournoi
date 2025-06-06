@@ -10,15 +10,34 @@ namespace Tournoi.Balancer
         private bool _found;
         private ulong _forcedCities;
         private ulong[] _solution;
-        private Dictionary<string, int> _cityNames;
-        private Dictionary<int, ulong> _cityMasks;
-        private List<Condition> _conditions;
+        private Dictionary<string, int> _cityCount;
+        private Dictionary<string, ulong> _cityMasks;
+        private List<Condition> _skipConditions;
 
-        public EQBalancer()
+        public List<List<int>> GetSolution()
         {
-            _cityNames = new Dictionary<string, int>();
-            _cityMasks = new Dictionary<int, ulong>();
-            _conditions = new List<Condition>()
+            var result = new List<List<int>>();
+            if (_solution == null) return result;
+            for (int i = 0; i < _solution.Length; i++)
+            {
+                var teamMask = _solution[i];
+                var team = new List<int>();
+                for (int j = 0; j < 64; j++)
+                {
+                    if (((teamMask >> j) & 1UL) != 0)
+                        team.Add(j);
+                }
+                if (team.Any())
+                    result.Add(team);
+            }
+            return result;
+        }
+
+        public void PrepareData(PersonModel[] players)
+        {
+            _cityCount = new Dictionary<string, int>();
+            _cityMasks = new Dictionary<string, ulong>();
+            _skipConditions = new List<Condition>()
             {
                 // same cities condition
                 delegate (EQTeam team, EQPlayer player)
@@ -32,26 +51,33 @@ namespace Tournoi.Balancer
                         && (_forcedCities & team.cities) == 0
                         && (_forcedCities & player.cityMask) == 0;
                 },
-
+                delegate (EQTeam team, EQPlayer player)
+                {
+                    return team.hasFemale && player.sex == Sex.Female;
+                }
             };
-        }
 
-        public void PrepareData(PersonModel[] players)
-        {
             _shortCount = players.Length / 4;
             _solution = new ulong[_shortCount];
 
+            int count = 0;
+
             foreach (PersonModel player in players)
             {
-                if (!_cityNames.TryAdd(player.City, 1))
+                if (!_cityCount.TryAdd(player.City, 1))
                 {
-                    _cityNames[player.City]++;
+                    _cityCount[player.City]++;
+                }
+                else
+                {
+                    _cityMasks[player.City] = 1UL << count;
+                    count++;
                 }
             }
 
             _players = players.Select(p => new EQPlayer
             {
-                cityMask = _cityMasks[_cityNames[p.City]],
+                cityMask = _cityMasks[p.City],
                 sex = p.Sex,
                 rank = p.Rank
             }).OrderByDescending(p => p.rank)
@@ -64,9 +90,14 @@ namespace Tournoi.Balancer
                 _players[i].indexMask = 1UL << i;
             }
 
-            // potentially has errors due to swapping key and value around - from (ulong, int) to (int, ulong)
-            var cities = _cityMasks.Where(city => city.Key == _shortCount).Select(city => city.Value);
+            var cities = _cityCount.Where(city => city.Value == _shortCount).Select(city => _cityMasks[city.Key]);
             _forcedCities = cities.Any() ? cities.Aggregate((acc, n) => acc |= n) : ~0UL;
+
+            var p = players.Select(p => p.City + " " + _cityMasks[p.City]);
+            var debug = _players.Select(p => p.cityMask);
+            var ps = string.Join("\n", p);
+            var ds = string.Join("\n", debug);
+            /*throw new Exception(ps);*/
         }
 
         public void StartSearch()
@@ -82,10 +113,11 @@ namespace Tournoi.Balancer
         {
             if (_found) { return; }
 
-            if (_solution.Last() != 0UL)
+
+            /*if (_solution.Last() != 0UL)*/
+            if (_solution[1] != 0UL)
             {
                 _found = true;
-                // return result
                 return;
             }
 
@@ -126,7 +158,7 @@ namespace Tournoi.Balancer
                 previous = _players[i];
 
                 bool skip = false;
-                foreach (var condition in _conditions)
+                foreach (var condition in _skipConditions)
                 {
                     if (condition(team, _players[i]))
                     {

@@ -1,4 +1,6 @@
-﻿namespace Tournoi.Balancer
+﻿using System.Numerics;
+
+namespace Tournoi.Balancer
 {
     public struct EQTeam
     {
@@ -8,6 +10,7 @@
         public int index;
         public int count;
         public int third;
+        public bool hasFemale;
         // TODO: add field for sex for balancing
 
         public int[] GetPlayers()
@@ -30,12 +33,25 @@
             return players;
         }
 
+        public void IsValid()
+        {
+            if (BitOperations.PopCount(cities) != count)
+            {
+                throw new Exception($"{cities.ToString("B64")}");
+            }
+        }
+
         public void AddPlayer(EQPlayer player)
         {
             cities |= player.cityMask;
             members |= player.indexMask;
             available &= ~player.indexMask;
+            if (player.sex == Sex.Female)
+            {
+                hasFemale = true;
+            }
             count++;
+            IsValid();
         }
 
         public void RemovePlayer(EQPlayer player)
@@ -43,6 +59,10 @@
             cities &= ~player.cityMask;
             members &= ~player.indexMask;
             available |= player.indexMask;
+            if (player.sex == Sex.Female)
+            {
+                hasFemale = false;
+            }
             count--;
         }
     }

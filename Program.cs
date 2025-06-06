@@ -10,6 +10,7 @@ namespace Tournoi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Logging.AddConsole();
             // Add services to the container.
             builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite("Data Source=database.db"));
             builder.Services.AddSingleton<BattlePlanner>();

@@ -1,0 +1,47 @@
+@page
+@model Tournoi.Pages.EQBalancerModel
+@{
+ViewData["Title"] = "EQ Balancer";
+}
+
+<h2>EQ Balancer</h2>
+
+<form method="post" asp-page-handler="Generate">
+    <button type="submit" class="btn btn-primary">Generate Teams</button>
+</form>
+
+@if (!Model.ModelState.IsValid)
+{
+<div class="alert alert-danger">
+    @foreach (var err in Model.ModelState.Values.SelectMany(v => v.Errors))
+    {
+    <div>@err.ErrorMessage</div>
+    }
+</div>
+}
+
+@if (Model.Teams?.Any() == true)
+{
+<h3>Generated Teams</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Team #</th>
+            <th>Player 1</th>
+            <th>Player 2</th>
+            <th>Player 3</th>
+            <th>Player 4</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Teams.Count; i++) { var team=Model.Teams[i]; <tr>
+            <td>@(i + 1)</td>
+            <td>@team.Player1?.FullName (@team.Player1?.City)</td>
+            <td>@team.Player2?.FullName (@team.Player2?.City)</td>
+            <td>@team.Player3?.FullName (@team.Player3?.City)</td>
+            <td>@team.Player4?.FullName (@team.Player4?.City)</td>
+            </tr>
+            }
+    </tbody>
+</table>
+}
