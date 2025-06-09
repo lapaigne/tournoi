@@ -8,7 +8,6 @@ namespace Tournoi.DB
         public DbSet<PersonModel> People => Set<PersonModel>();
         public DbSet<PlayerModel> Players => Set<PlayerModel>();
         public DbSet<EQTeamModel> EQTeams => Set<EQTeamModel>();
-        public DbSet<PairModel> Pairs => Set<PairModel>();
 
         public AppDBContext(DbContextOptions<AppDBContext> options) : base(options) { }
 
