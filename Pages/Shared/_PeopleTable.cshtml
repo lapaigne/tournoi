@@ -1,47 +1,162 @@
 ﻿@model List<PlayerDisplay>
 
-<table>
-    <thead>
-        <tr>
-            <th>Full Name</th>
-            <th>City</th>
-            <th>Rank</th>
-            <th>Sex</th>
-            <th>SI</th>
-            <th>EQ</th>
-            <th>ASI</th>
-            <th>PSI</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var player in Model)
-        {
+    <style>
+        .people-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.07);
+            font-size: 1rem;
+        }
+
+        .people-table thead tr {
+            background: #f1f3f6;
+        }
+
+        .people-table th,
+        .people-table td {
+            padding: 0.7rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .people-table th {
+            font-size: 1.07rem;
+            font-weight: 600;
+            color: #374151;
+            letter-spacing: 0.02em;
+        }
+
+        .people-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .people-table tr:hover td {
+            background: #f6fafd;
+            transition: background 0.18s;
+        }
+
+        .people-table td {
+            color: #333;
+        }
+
+        .people-table td.actions {
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .people-table button {
+            background: #f5f8fa;
+            border: 1px solid #cfd8dc;
+            color: #2471a3;
+            border-radius: 5px;
+            padding: 0.3rem 0.95rem;
+            margin-right: 0.25rem;
+            font-size: 0.98rem;
+            cursor: pointer;
+            transition: background 0.14s, border 0.14s, color 0.14s;
+        }
+
+        .people-table button:last-child {
+            margin-right: 0;
+        }
+
+        .people-table button:hover {
+            background: #e3f0fd;
+            border-color: #90caf9;
+            color: #0d47a1;
+        }
+
+        .people-table .checkmark {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .people-table .crossmark {
+            color: #c0392b;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+    </style>
+
+    <table class="people-table">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Город</th>
+                <th>Рейтинг</th>
+                <th>Пол</th>
+                <th>СИ</th>
+                <th>ЭК</th>
+                <th>Анти</th>
+                <th>Пары</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Model)
+            {
             <tr id="player-row-@player.Id">
                 <td>@player.FullName</td>
                 <td>@player.City</td>
                 <td>@player.Rank</td>
-                <td>@player.Sex</td>
-                <td>@(player.SI ? "✔" : "✘")</td>
-                <td>@(player.EQ ? "✔" : "✘")</td>
-                <td>@(player.ASI ? "✔" : "✘")</td>
-                <td>@(player.PSI ? "✔" : "✘")</td>
+                <td>@((int)player.Sex == 1 ? "М" : "Ж")</td>
                 <td>
-                    <button hx-post="/EditPeople?handler=EditPlayer" 
-                            hx-params="id=@player.Id"
-                            hx-target="#edit-display-player-form"
-                            hx-swap="innerHTML">
-                        Edit
-                    </button> 
-                    <button hx-post="/EditPeople/DeletePlayer"
-                            hx-vals="{'id': '@player.Id'}"
-                            hx-confirm="Are you sure you want to delete this player?"
-                            hx-target="#display-player-@player.Id"
-                            hx-swap="outerHTML">
-                        Delete
+                    @if (player.SI)
+                    {
+                    <span class="checkmark">✓</span>
+                    }
+                    else
+                    {
+                    <span class="crossmark"></span>
+                    }
+                </td>
+                <td>
+                    @if (player.EQ)
+                    {
+                    <span class="checkmark">✓</span>
+                    }
+                    else
+                    {
+                    <span class="crossmark"></span>
+                    }
+                </td>
+                <td>
+                    @if (player.ASI)
+                    {
+                    <span class="checkmark">✓</span>
+                    }
+                    else
+                    {
+                    <span class="crossmark"></span>
+                    }
+                </td>
+                <td>
+                    @if (player.PSI)
+                    {
+                    <span class="checkmark">✓</span>
+                    }
+                    else
+                    {
+                    <span class="crossmark"></span>
+                    }
+                </td>
+                <td class="actions">
+                    <button hx-post="/EditPeople?handler=EditPlayer" hx-params="id=@player.Id"
+                        hx-target="#edit-display-player-form" hx-swap="innerHTML">
+                        Редактировать
+                    </button>
+                    <button hx-post="/EditPeople/DeletePlayer" hx-vals="{'id': '@player.Id'}"
+                        hx-confirm="Are you sure you want to delete this player?" hx-target="#display-player-@player.Id"
+                        hx-swap="outerHTML">
+                        Удалить
                     </button>
                 </td>
             </tr>
-        }
-    </tbody>
-</table>
+            }
+        </tbody>
+    </table>

@@ -30,7 +30,6 @@ namespace Tournoi.Pages
 
         public async Task<IActionResult> OnPostGenerateAsync()
         {
-            // Remove existing teams (optional: only if you want to reset each time)
             var oldTeams = _context.EQTeams.ToList();
             if (oldTeams.Any())
             {
@@ -40,7 +39,6 @@ namespace Tournoi.Pages
 
             var players = _context.People.ToArray();
 
-            // Early out: only balance if divisible by 4
             if (players.Length < 4 || players.Length % 4 != 0)
             {
                 ModelState.AddModelError(string.Empty, "Number of players must be divisible by 4.");
@@ -48,25 +46,22 @@ namespace Tournoi.Pages
                 return Page();
             }
 
-            // Prepare and run balancer
             var balancer = new EQBalancer();
             balancer.PrepareData(players);
             balancer.StartSearch();
 
-            // Collect solution
             var solution = balancer.GetSolution();
             var teamsToAdd = new List<EQTeamModel>();
 
             foreach (var group in solution)
             {
-                // The group is a List<int> of player indices
-                if (group.Count != 4) continue;
+                var hash = group.GetHashCode();
                 var team = new EQTeamModel
                 {
-                    Player1Id = players[group[0] - 1].Id,
-                    Player2Id = players[group[1] - 1].Id,
-                    Player3Id = players[group[2] - 1].Id,
-                    Player4Id = players[group[3] - 1].Id
+                    Player1Id = players[group[hash % 4] - 1].Id,
+                    Player2Id = players[group[(1 + hash) % 4] - 1].Id,
+                    Player3Id = players[group[(2 + hash) % 4] - 1].Id,
+                    Player4Id = players[group[(3 + hash) % 4] - 1].Id
                 };
                 teamsToAdd.Add(team);
             }

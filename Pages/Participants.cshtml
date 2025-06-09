@@ -1,33 +1,58 @@
 ﻿@page
 @model ParticipantsModel
 
-<div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Поиск по..." oninput="filterTable()" />
-</div>
+<style>
+    .participants-table-wrapper {
+        max-height: 75vh;
+        overflow-y: auto;
+        margin-bottom: 2.5rem;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 95%;
+        box-sizing: border-box;
+        position: relative;
+    }
 
-<div class="scrollable">
-    <table id="playersTable">
+    .search-bar-over-table {
+        position: absolute;
+        right: 1.5rem;
+        top: -2.2rem;
+        /* Adjust for overlap above table header */
+        z-index: 2;
+        background: white;
+        padding: 0.2rem 0.6rem;
+        border-radius: 0.3rem;
+        box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.08);
+    }
+</style>
+
+<div class="participants-table-wrapper">
+    <div class="search-bar-over-table">
+        <input type="text" id="searchInput" placeholder="Поиск по..." oninput="filterTable()" />
+    </div>
+    <table id="playersTable" class="table table-striped table-bordered">
         <thead>
             <tr>
-                <th class="sortable" onclick="sortTable(0)">Full Name</th>
-                <th class="sortable" onclick="sortTable(1)">City</th>
-                <th>SI</th>
-                <th>ASI</th>
-                <th>EQ</th>
-                <th>PSI</th>
+                <th class="sortable" onclick="sortTable(0)">Имя</th>
+                <th class="sortable" onclick="sortTable(1)">Город</th>
+                <th>СИ</th>
+                <th>Анти</th>
+                <th>ЭК</th>
+                <th>Пары</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var p in Model.Participants)
             {
-                <tr>
-                    <td>@p.FullName</td>
-                    <td>@p.City</td>
-                    <td>@(p.SI ? "✓" : "")</td>
-                    <td>@(p.ASI ? "✓" : "")</td>
-                    <td>@(p.EQ ? "✓" : "")</td>
-                    <td>@(p.PSI ? "✓" : "")</td>
-                </tr>
+            <tr>
+                <td>@p.FullName</td>
+                <td>@p.City</td>
+                <td>@(p.SI ? "✓" : "")</td>
+                <td>@(p.ASI ? "✓" : "")</td>
+                <td>@(p.EQ ? "✓" : "")</td>
+                <td>@(p.PSI ? "✓" : "")</td>
+            </tr>
             }
         </tbody>
     </table>

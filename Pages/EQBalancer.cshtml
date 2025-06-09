@@ -9,6 +9,7 @@ ViewData["Title"] = "EQ Balancer";
         margin-left: 50px;
         margin-right: 50px;
         /* Or use margin: 0 50px; for shorthand */
+        max-width: 80%;
     }
 
     .eq-table {
@@ -42,18 +43,8 @@ ViewData["Title"] = "EQ Balancer";
 </style>
 
 <form method="post" asp-page-handler="Generate" style="margin-bottom: 25px;">
-    <button type="submit" class="btn btn-primary">Generate Teams</button>
+    <button type="submit" class="btn btn-primary">Подобрать команды</button>
 </form>
-
-@if (!Model.ModelState.IsValid)
-{
-<div class="alert alert-danger">
-    @foreach (var err in Model.ModelState.Values.SelectMany(v => v.Errors))
-    {
-    <div>@err.ErrorMessage</div>
-    }
-</div>
-}
 
 @if (Model.Teams?.Any() == true)
 {
@@ -61,21 +52,21 @@ ViewData["Title"] = "EQ Balancer";
     <table class="eq-table">
         <thead>
             <tr>
-                <th>Team #</th>
-                <th>Player 1</th>
-                <th>Player 2</th>
-                <th>Player 3</th>
-                <th>Player 4</th>
+                <th>Команда</th>
+                <th>Игрок 1</th>
+                <th>Игрок 2</th>
+                <th>Игрок 3</th>
+                <th>Игрок 4</th>
             </tr>
         </thead>
 
         <tbody>
             @for (int i = 0; i < Model.Teams.Count; i++) { var team=Model.Teams[i]; <tr>
                 <td>@(i + 1)</td>
-                <td>@team.Player1?.FullName (@team.Player1?.City) </td>
-                <td>@team.Player2?.FullName (@team.Player2?.City) </td>
-                <td>@team.Player3?.FullName (@team.Player3?.City) </td>
-                <td>@team.Player4?.FullName (@team.Player4?.City) </td>
+                <td>@team.Player1?.FullName </td>
+                <td>@team.Player2?.FullName </td>
+                <td>@team.Player3?.FullName </td>
+                <td>@team.Player4?.FullName </td>
                 </tr>
                 }
         </tbody>
