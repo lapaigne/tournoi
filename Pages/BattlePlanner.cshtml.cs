@@ -31,7 +31,7 @@ namespace Tournoi.Pages
             if (players.Count == 7)
             {
                 var planner = new BattlePlanner();
-                var scheme = planner.ApplyScheme("seven", players.ToArray());
+                var scheme = planner.ApplyScheme($"{players.Count}", players.ToArray());
 
                 Battles = scheme.Select(row => row.ToList()).ToList();
             }

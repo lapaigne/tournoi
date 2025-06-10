@@ -1,46 +1,24 @@
+using System.Text.Json;
+
 namespace Tournoi.Battles
 {
     public class BattlePlanner
     {
-        private Dictionary<string, int[][]> predefined;
+        private readonly Dictionary<string, int[][]> predefined;
         private int[] players;
         private int size;
 
         public BattlePlanner()
         {
-            /*
-                0b0000000000110011
-                0b0000000000011110
-                0b0000000000101101
-                0b0000000000111001
-                0b0000000000110110
-                0b0000000000001111 
-             */
-            int[][] six = [
-                [0, 1, 4, 5],
-                [1, 2, 3, 4],
-                [0, 2, 3, 5],
-                [0, 3, 4, 5],
-                [1, 2, 4, 5],
-                [0, 1, 2, 3]
-            ];
-
-            int[][] seven = [
-                [1, 2, 4, 5],
-                [0, 3, 5, 6],
-                [1, 3, 4, 5],
-                [0, 1, 2, 4],
-                [2, 3, 5, 6],
-                [0, 4, 5, 6],
-                [0, 1, 2, 3]
-            ];
-
-            predefined = new Dictionary<string, int[][]>
+            var jsonPath = Path.Combine(AppContext.BaseDirectory, "GameSchemes", "battleschemes.json");
+            if (!File.Exists(jsonPath))
             {
-                { "six", six },
-                { "seven", seven }
-            };
+                throw new FileNotFoundException($"Scheme file not found: {jsonPath}");
+            }
 
+            var json = File.ReadAllText(jsonPath);
+
+            predefined = JsonSerializer.Deserialize<Dictionary<string, int[][]>>(json) ?? new Dictionary<string, int[][]>();
         }
 
         public T[][] ApplyScheme<T>(string schemeName, T[] players)
@@ -52,7 +30,7 @@ namespace Tournoi.Battles
 
             int[][] scheme = predefined[schemeName];
 
-            if (players.Count() != scheme.Count())
+            if (players.Length != scheme.Length)
             {
                 throw new ArgumentException($"Incompatible scheme: counts don't match");
             }
