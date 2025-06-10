@@ -18,7 +18,6 @@ namespace Tournoi.Pages
         public bool PSI { get; set; }
     }
 
-    [Authorize]
     public class ParticipantsModel : PageModel
     {
         private readonly AppDBContext _context;

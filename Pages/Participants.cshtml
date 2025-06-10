@@ -1,72 +1,135 @@
 ﻿@page
-@model ParticipantsModel
+@model Tournoi.Pages.ParticipantsModel
+@{
+Layout = "_Layout";
+}
 
 <style>
-    .participants-table-wrapper {
-        max-height: 75vh;
-        overflow-y: auto;
-        margin-bottom: 2.5rem;
-        max-width: 900px;
-        margin-left: auto;
-        margin-right: auto;
-        width: 95%;
-        box-sizing: border-box;
-        position: relative;
+    .participants-table-wrap {
+        display: flex;
+        gap: 3.6rem;
+        /* 10% smaller */
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        margin-top: 2.0rem;
+        margin-left: 0.9rem;
+        margin-right: 0.9rem;
+        width: auto;
     }
 
+    .participants-table-box {
+        min-width: 324px;
+        max-width: 600px;
+        width: 100%;
+        flex: 1 1 360px;
+    }
+
+    .participants-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: #fff;
+        border-radius: 9px;
+        overflow: hidden;
+        box-shadow: 0 2.7px 10.8px -1.8px rgba(0, 0, 0, 0.09);
+        font-size: 0.97rem;
+        margin-bottom: 0;
+        table-layout: auto;
+    }
+
+    .participants-table thead tr {
+        background: #f1f3f6;
+    }
+
+    .participants-table th,
+    .participants-table td {
+        padding: 0.29rem 0.47rem;
+        text-align: left;
+        border-bottom: 1px solid #e6e6e6;
+        line-height: 1.1;
+        height: 1.8em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .participants-table th {
+        font-size: 1.01rem;
+        font-weight: 600;
+        color: #374151;
+        letter-spacing: 0.011em;
+    }
+
+    .participants-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .participants-table tr:hover td {
+        background: #f6fafd;
+        transition: background 0.18s;
+    }
+
+    .participants-table td {
+        color: #333;
+    }
+
+    .participants-table td.fullname,
+    .participants-table th.fullname {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        max-width: none;
+        width: auto;
+    }
+
+    .participants-title {
+        text-align: center;
+        margin-top: 0.72em;
+        margin-bottom: 0.99em;
+        font-size: 1.575em;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+    }
 </style>
 
-<div class="participants-table-wrapper">
-    <table id="playersTable" class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th class="sortable" onclick="sortTable(0)">Имя</th>
-                <th class="sortable" onclick="sortTable(1)">Город</th>
-                <th>СИ</th>
-                <th>Анти</th>
-                <th>ЭК</th>
-                <th>Пары</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var p in Model.Participants)
-            {
-            <tr>
-                <td>@p.FullName</td>
-                <td>@p.City</td>
-                <td>@(p.SI ? "✓" : "")</td>
-                <td>@(p.ASI ? "✓" : "")</td>
-                <td>@(p.EQ ? "✓" : "")</td>
-                <td>@(p.PSI ? "✓" : "")</td>
-            </tr>
-            }
-        </tbody>
-    </table>
-</div>
+<h2 class="participants-title">Участники турнира</h2>
+@{
+var people = Model.Participants;
+int total = people.Count;
+int minRowsPerTable = 11; // 10% smaller
+int maxTables = (int)Math.Ceiling((double)total / minRowsPerTable);
+int suggestedTables = Math.Min(3, maxTables);
+int rowsPerTable = (int)Math.Ceiling((double)total / suggestedTables);
 
-<script>
-    // JavaScript for sorting and filtering
-    function filterTable() {
-        const input = document.getElementById("searchInput").value.toLowerCase();
-        const rows = document.querySelectorAll("#playersTable tbody tr");
-
-        rows.forEach(row => {
-            const name = row.children[0].textContent.toLowerCase();
-            const city = row.children[1].textContent.toLowerCase();
-            row.style.display = (name.includes(input) || city.includes(input)) ? "" : "none";
-        });
-    }
-
-    function sortTable(column) {
-        const table = document.getElementById("playersTable");
-        const rows = Array.from(table.tBodies[0].rows);
-
-        rows.sort((a, b) => {
-            const textA = a.cells[column].textContent.trim().toLowerCase();
-            const textB = b.cells[column].textContent.trim().toLowerCase();
-            return textA.localeCompare(textB);
-        });
-
-        rows.forEach(row => table.tBodies[0].appendChild(row));
-    }
-</script>
+List<List<Tournoi.Pages.PlayerDisplay>> tables = new List<List<Tournoi.Pages.PlayerDisplay>>();
+        for (int i = 0; i < suggestedTables; i++) { tables.Add( people.Skip(i *
+            rowsPerTable).Take(rowsPerTable).ToList() ); } } <div class="participants-table-wrap">
+            @for (int t = 0; t < tables.Count; t++) { <div class="participants-table-box">
+                <table class="participants-table">
+                    <thead>
+                        <tr>
+                            <th style="width:2.5em;">#</th>
+                            <th class="fullname">Имя</th>
+                            <th style="width:6.3em;">Город</th>
+                            <th style="width:2em;">СИ</th>
+                            <th style="width:2em;">ЭК</th>
+                            <th style="width:2.3em;">Пары</th>
+                            <th style="width:2.3em;">Анти</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < tables[t].Count; i++) { var player=tables[t][i]; <tr>
+                            <td>@((t * rowsPerTable) + i + 1)</td>
+                            <td class="fullname">@player.FullName</td>
+                            <td>@player.City</td>
+                            <td>@(player.SI ? "✓" : "")</td>
+                            <td>@(player.EQ ? "✓" : "")</td>
+                            <td>@(player.ASI ? "✓" : "")</td>
+                            <td>@(player.PSI ? "✓" : "")</td>
+                            </tr>
+                            }
+                    </tbody>
+                </table>
+                </div>
+                }
+                </div>
