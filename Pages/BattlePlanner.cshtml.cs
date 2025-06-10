@@ -4,14 +4,14 @@ using Tournoi.Battles;
 using Tournoi.DB;
 namespace Tournoi.Pages
 {
-    public class ViewSchemesModel : PageModel
+    public class BattlePlannerModel : PageModel
     {
         private readonly AppDBContext _context;
 
         public List<List<string>> Battles { get; set; } = new();
         public List<string> SelectedPlayers { get; set; } = new();
 
-        public ViewSchemesModel(AppDBContext context)
+        public BattlePlannerModel(AppDBContext context)
         {
             _context = context;
         }

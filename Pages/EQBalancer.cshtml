@@ -3,13 +3,179 @@
 @using Tournoi.Models
 @using Tournoi.DB
 @{
-    ViewData["Title"] = "EQ Balancer";
+ViewData["Title"] = "EQ Balancer";
+Layout = "_Layout";
 }
 
-<div class="eqbalancer-page">
-    <aside class="eqbalancer-panel">
-        <div class="panel-title">Панель управления</div>
-        <form method="post" asp-page-handler="Generate" style="margin-bottom:20px;">
+<style>
+    /* Renamed from .people-table to .eqb-table for EQBalancer page */
+    .eqb-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.07);
+        font-size: 1rem;
+    }
+
+    .eqb-table thead tr {
+        background: #f1f3f6;
+    }
+
+    .eqb-table th,
+    .eqb-table td {
+        padding: 0.7rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e6e6e6;
+    }
+
+    .eqb-table th {
+        font-size: 1.07rem;
+        font-weight: 600;
+        color: #374151;
+        letter-spacing: 0.02em;
+    }
+
+    .eqb-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .eqb-table tr:hover td {
+        background: #f6fafd;
+        transition: background 0.18s;
+    }
+
+    .eqb-table td {
+        color: #333;
+    }
+
+    .eqb-table td.actions {
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .eqb-table button {
+        background: #f5f8fa;
+        border: 1px solid #cfd8dc;
+        color: #2471a3;
+        border-radius: 5px;
+        padding: 0.3rem 0.95rem;
+        margin-right: 0.25rem;
+        font-size: 0.98rem;
+        cursor: pointer;
+        transition: background 0.14s, border 0.14s, color 0.14s;
+    }
+
+    .eqb-table button:last-child {
+        margin-right: 0;
+    }
+
+    .eqb-table button:hover {
+        background: #e3f0fd;
+        border-color: #90caf9;
+        color: #0d47a1;
+    }
+
+    .eqb-table .checkmark {
+        color: #27ae60;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+
+    .eqb-table .crossmark {
+        color: #c0392b;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+
+    #edit-people-container {
+        display: flex;
+        flex-direction: row;
+        gap: 32px;
+        align-items: flex-start;
+        max-width: 1600px;
+        margin: 0 auto 2.5rem auto;
+        min-height: 70vh;
+        overflow-x: auto;
+    }
+
+    #eqbalancer-panel {
+        flex: 0 0 340px;
+        min-width: 260px;
+        max-width: 400px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px 20px 18px 20px;
+        box-shadow: 0 2px 8px -4px rgba(0, 0, 0, 0.06);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+        justify-content: flex-start;
+    }
+
+    #eqbalancer-table-container {
+        flex: 1 1 900px;
+        min-width: 340px;
+        max-width: 100%;
+        height: 80vh;
+        overflow-y: auto;
+        background: #fff;
+        border: 1px solid #e2e2e2;
+        border-radius: 8px;
+        padding: 16px 14px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .panel-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #223;
+        letter-spacing: 1px;
+    }
+
+    .panel-toggles label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .btn-panel-generate {
+        background: #007bff;
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 5px;
+        padding: 0.5rem 0;
+        font-size: 1.05rem;
+        margin-top: 1rem;
+        cursor: pointer;
+        padding-left: 20px;
+        padding-right: 20px;
+
+    }
+
+    .blue-checkbox input[type="checkbox"] {
+        accent-color: #337ab7;
+    }
+</style>
+
+<div id="edit-people-container">
+    <!-- Panel on the Left -->
+    <aside id="eqbalancer-panel">
+        <div class="panel-title">Балансировка команд</div>
+        <form method="post" asp-page-handler="Generate" style="">
             <button type="submit" class="btn-panel-generate">Подобрать команды</button>
         </form>
         <div class="panel-toggles">
@@ -17,224 +183,66 @@
                 <input type="checkbox" id="showCity" checked> Показать город
             </label>
             <label class="blue-checkbox">
-                <input type="checkbox" id="showRank" checked> Показать ранг
+                <input type="checkbox" id="showRank" checked> Показать рейтинг
             </label>
         </div>
     </aside>
 
-    <main class="eqbalancer-table-main">
+    <!-- Table on the Right -->
+    <div id="eqbalancer-table-container">
         @if (Model.Teams?.Any() == true)
         {
-            <table class="eqbalancer-table">
-                <thead>
-                    <tr>
-                        <th class="team-number-col">№</th>
-                        <th class="player-col">Игрок 1</th>
-                        <th class="player-col">Игрок 2</th>
-                        <th class="player-col">Игрок 3</th>
-                        <th class="player-col">Игрок 4</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 0; i < Model.Teams.Count; i++)
+        <table class="eqb-table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Игрок 1</th>
+                    <th>Игрок 2</th>
+                    <th>Игрок 3</th>
+                    <th>Игрок 4</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Teams.Count; i++) { var team=Model.Teams[i]; PersonModel[] players=new[] {
+                    team.Player1, team.Player2, team.Player3, team.Player4 }; <tr>
+                    <td>@(i + 1)</td>
+                    @foreach (var player in players)
                     {
-                        var team = Model.Teams[i];
-                        PersonModel[] players = new[] { team.Player1, team.Player2, team.Player3, team.Player4 };
-                        <tr>
-                            <td class="team-number">@((i + 1))</td>
-                            @for (int p = 0; p < players.Length; p++)
-                            {
-                                var player = players[p];
-                                <td class="player-cell">
-                                    <div class="cell-content">
-                                        <div class="player-name">@player?.FullName</div>
-                                        <div class="player-meta">
-                                            <span class="player-city">@player?.City</span>
-                                            <span class="player-rank">@player?.Rank</span>
-                                        </div>
-                                    </div>
-                                </td>
-                            }
-                        </tr>
+                    <td>
+                        <div><b>@player?.FullName</b></div>
+                        <div>
+                            <span class="player-city"><i>@player?.City</i></span>
+                            <span class="player-rank">@player?.Rank</span>
+                        </div>
+                    </td>
                     }
-                </tbody>
-            </table>
+                    </tr>
+                    }
+            </tbody>
+        </table>
         }
-    </main>
+    </div>
 </div>
 
-<style>
-.eqbalancer-page {
-    display: flex;
-    align-items: flex-start;
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    background: #fff;
-}
-.eqbalancer-panel {
-    background: #fafbfc;
-    border-right: 1px solid #e5e5e5;
-    padding: 20px 18px 10px 18px;
-    min-width: 210px;
-    max-width: 240px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: stretch;
-    justify-content: flex-start;
-}
-.panel-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #223;
-    letter-spacing: 1px;
-}
-.panel-toggles label {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    margin-bottom: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    user-select: none;
-}
-.btn-panel-generate {
-    width: 100%;
-    font-size: 1em;
-    background: #337ab7;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 0;
-    cursor: pointer;
-    box-shadow: none;
-    margin-bottom: 4px;
-}
-.btn-panel-generate:hover {
-    background: #23527c;
-}
-.blue-checkbox input[type="checkbox"] {
-    accent-color: #337ab7;
-}
-.eqbalancer-table-main {
-    flex: 1 1 0;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    min-width: 0;
-    height: 100vh;
-    overflow: auto;
-    background: #fff;
-    box-sizing: border-box;
-    padding: 0;
-}
-.eqbalancer-table {
-    width: 100%;
-    max-width: 1400px;
-    min-width: 1000px;
-    margin: 0 auto;
-    table-layout: fixed;
-    border-collapse: collapse;
-    background: #fff;
-    border: 2px solid #c7d0db;
-}
-.eqbalancer-table th,
-.eqbalancer-table td {
-    border: 2px solid #c7d0db;
-    text-align: center;
-    font-size: 1em;
-    background: #fff;
-    padding: 0;
-    height: 44px;
-    vertical-align: middle;
-    box-sizing: border-box;
-}
-.eqbalancer-table th {
-    background: #eef6ff;
-    font-weight: 700;
-    color: #223;
-}
-.team-number-col, .team-number {
-    width: 48px;
-    min-width: 48px;
-    max-width: 48px;
-    font-weight: 700;
-    padding: 0 !important;
-}
-.player-col,
-.player-cell {
-    width: 260px;
-    min-width: 260px;
-    max-width: 320px;
-}
-.player-cell {
-    background: #fff;
-    margin: 0;
-    transition: background 0.15s;
-    padding: 0;
-    vertical-align: middle;
-}
-.cell-content {
-    width: 100%;
-    height: 100%;
-    min-height: 44px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-.player-name {
-    font-weight: bold;
-    font-size: 1em;
-    line-height: 1.1;
-    width: 100%;
-    text-align: center;
-}
-.player-meta {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    font-size: 0.97em;
-    margin-top: 2px;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    min-height: 18px;
-}
-.player-city {
-    font-style: italic;
-    color: #636;
-}
-.player-rank {
-    font-weight: normal;
-    color: #444;
-}
-</style>
-
 @section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll('.panel-toggles input[type="checkbox"]').forEach(cb => {
-                cb.addEventListener('change', toggleColumns);
-            });
-            toggleColumns();
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.panel-toggles input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', toggleColumns);
         });
+        toggleColumns();
+    });
 
-        function toggleColumns() {
-            let showCity = document.getElementById("showCity").checked;
-            let showRank = document.getElementById("showRank").checked;
+    function toggleColumns() {
+        let showCity = document.getElementById("showCity").checked;
+        let showRank = document.getElementById("showRank").checked;
 
-            document.querySelectorAll(".player-city").forEach(el => {
-                el.style.display = showCity ? "inline" : "none";
-            });
-            document.querySelectorAll(".player-rank").forEach(el => {
-                el.style.display = showRank ? "inline" : "none";
-            });
-        }
-    </script>
+        document.querySelectorAll(".player-city").forEach(el => {
+            el.style.display = showCity ? "inline" : "none";
+        });
+        document.querySelectorAll(".player-rank").forEach(el => {
+            el.style.display = showRank ? "inline" : "none";
+        });
+    }
+</script>
 }
