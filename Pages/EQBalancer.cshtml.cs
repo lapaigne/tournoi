@@ -55,13 +55,12 @@ namespace Tournoi.Pages
 
             foreach (var group in solution)
             {
-                var hash = group.GetHashCode();
                 var team = new EQTeamModel
                 {
-                    Player1Id = players[group[hash % 4] - 1].Id,
-                    Player2Id = players[group[(1 + hash) % 4] - 1].Id,
-                    Player3Id = players[group[(2 + hash) % 4] - 1].Id,
-                    Player4Id = players[group[(3 + hash) % 4] - 1].Id
+                    Player1Id = players[group[0] - 1].Id,
+                    Player2Id = players[group[1] - 1].Id,
+                    Player3Id = players[group[2] - 1].Id,
+                    Player4Id = players[group[3] - 1].Id
                 };
                 teamsToAdd.Add(team);
             }
@@ -78,6 +77,61 @@ namespace Tournoi.Pages
                 .Include(t => t.Player3)
                 .Include(t => t.Player4)
                 .ToListAsync();
+
+            return Page();
+        }
+
+        // Reorder rows handler (in-memory, not persisted in DB by default)
+        public async Task<IActionResult> OnPostReorderAsync(int index, string direction)
+        {
+            Teams = await _context.EQTeams
+                .Include(t => t.Player1)
+                .Include(t => t.Player2)
+                .Include(t => t.Player3)
+                .Include(t => t.Player4)
+                .OrderBy(t => t.Id)
+                .ToListAsync();
+
+            if ((direction == "up" && index > 0) || (direction == "down" && index < Teams.Count - 1))
+            {
+                int newIndex = direction == "up" ? index - 1 : index + 1;
+                var temp = Teams[index];
+                Teams[index] = Teams[newIndex];
+                Teams[newIndex] = temp;
+                // To persist: add a SortOrder property to EQTeamModel and update it here
+            }
+
+            return Page();
+        }
+
+        // Swap players within a team handler
+        public async Task<IActionResult> OnPostSwapAsync(int teamIdx, int leftIdx, int rightIdx)
+        {
+            Teams = await _context.EQTeams
+                .Include(t => t.Player1)
+                .Include(t => t.Player2)
+                .Include(t => t.Player3)
+                .Include(t => t.Player4)
+                .OrderBy(t => t.Id)
+                .ToListAsync();
+
+            if (teamIdx >= 0 && teamIdx < Teams.Count && leftIdx >= 0 && rightIdx <= 3 && leftIdx < rightIdx)
+            {
+                var team = Teams[teamIdx];
+                var ids = new int[] {
+                    team.Player1Id, team.Player2Id, team.Player3Id, team.Player4Id
+                };
+                // Swap the two
+                var tmp = ids[leftIdx];
+                ids[leftIdx] = ids[rightIdx];
+                ids[rightIdx] = tmp;
+                team.Player1Id = ids[0];
+                team.Player2Id = ids[1];
+                team.Player3Id = ids[2];
+                team.Player4Id = ids[3];
+                _context.EQTeams.Update(team);
+                await _context.SaveChangesAsync();
+            }
 
             return Page();
         }
